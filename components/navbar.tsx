@@ -1,0 +1,87 @@
+'use client';
+
+import { useState } from "react";
+import Link from "next/link";
+
+const sports = ["Football", "Men's Basketball", "Baseball", "Soccer"];
+const teams = ["Boise State", "Colorado State", "Fresno State", "Gonzaga", "Oregon State", "San Diego State", "Texas State", "Utah State", "Washington State"]
+
+const Navbar = () => {
+  const [openDropdown, setOpenDropdown] = useState<'sports' | 'teams' | null>(null);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  interface DropdownType {
+    sports: 'sports';
+    teams: 'teams';
+  }
+
+  type DropdownName = DropdownType[keyof DropdownType] | null;
+
+  const toggleDropdown = (name: DropdownName): void => {
+    setOpenDropdown(openDropdown === name ? null : name);
+  };
+
+  return (
+    <header className="relative bg-slate-900 text-white h-16">
+      <nav className="flex items-center justify-between p-4 max-w-7xl mx-auto">
+        <Link href="/" className="font-bold text-xl">The After Dark</Link>
+
+        {/* Mobile Toggle */}
+        <button className="md:hidden" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
+          {isMobileMenuOpen ? '✕' : '☰'}
+        </button>
+
+        <ul className={`${isMobileMenuOpen ? 'flex' : 'hidden'} md:flex flex-col md:flex-row absolute md:relative top-full left-0 w-full md:w-auto bg-slate-900 md:items-center gap-4 p-4 md:p-0 z-50`}>
+
+          {/* Sport Dropdown*/}
+          <li className="relative">
+            <button onClick={() => toggleDropdown('sports')} className="hover:text-blue-400">
+              Sports ▾
+            </button>
+            {openDropdown === 'sports' && (
+              <ul className="md:absolute left-0 mt-2 w-48 bg-slate-800 rounded shadow-lg max-h-64 overflow-y-auto z-50">
+                {sports.map((sport) => (
+                  <li key={sport}>
+                    <Link
+                      href={`/sports/${sport.toLowerCase().replace(/\s+/g, '-').replace(/'/g, '')}`}
+                      className="block px-4 py-2 hover:bg-slate-700"
+                    >
+                      {sport}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </li>
+
+          {/* Team Dropdown */}
+          <li className="relative">
+            <button onClick={() => toggleDropdown('teams')} className="hover:text-blue-400">
+              Teams ▾
+            </button>
+            {openDropdown === 'teams' && (
+              <ul className="md:absolute left-0 mt-2 w-48 bg-slate-800 rounded shadow-lg max-h-64 overflow-y-auto z-50">
+                {teams.map((team) => (
+                  <li key={team}>
+                    <Link
+                      href={`/teams/${team.toLowerCase().replace(/\s+/g, '-').replace(/'/g, '')}`}
+                      className="block px-4 py-2 hover:bg-slate-700"
+                    >
+                      {team}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </li>
+
+          {/* Standard Links */}
+          <li><Link href="/big-board" className="hover:text-blue-400">Big Board</Link></li>
+          <li><Link href="/polls" className="hover:text-blue-400">Polls</Link></li>
+        </ul>
+      </nav>
+    </header>
+  );
+};
+
+export default Navbar;
