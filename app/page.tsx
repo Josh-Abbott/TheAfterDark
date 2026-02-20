@@ -1,4 +1,6 @@
-const Home = () => {
+import TodaysGames from "@/components/todays-games";
+
+const Home = async () => {
   return (
     <main className="flex flex-col">
 
@@ -39,13 +41,8 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Nightly News */}
-      <section className="px-6 py-20">
-        <h2 className="text-3xl font-bold text-center mb-12">Nightly News</h2>
-        <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
-
-        </div>
-      </section>
+      {/* Today's Games */}
+      <TodaysGames />
     </main>
   )
 }
