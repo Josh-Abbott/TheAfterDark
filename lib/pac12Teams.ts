@@ -8,5 +8,4 @@ export const PAC_TEAMS = [
   "San Diego State",
   "Texas State",
   "Utah State",
-  "Dallas Baptist",
 ];

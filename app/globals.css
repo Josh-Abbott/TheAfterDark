@@ -33,24 +33,33 @@ body {
 /* Neon Effect */
 @layer utilities {
   @keyframes flicker {
-  0%, 18%, 22%, 24%, 55%, 57%, 100% {
-    opacity: 1;
-    filter: brightness(100%);
-  }
 
-  /* softer dip */
-  19%, 21%, 23%, 56% {
-    opacity: 0.85;
-    filter: brightness(90%);
-  }
+    0%,
+    18%,
+    22%,
+    24%,
+    55%,
+    57%,
+    100% {
+      opacity: 1;
+      filter: brightness(100%);
+    }
 
-  /* tiny glitch */
-  80% {
-    opacity: 0.92;
-    filter: brightness(95%);
-  }
-}
+    /* softer dip */
+    19%,
+    21%,
+    23%,
+    56% {
+      opacity: 0.85;
+      filter: brightness(90%);
+    }
 
+    /* tiny glitch */
+    80% {
+      opacity: 0.92;
+      filter: brightness(95%);
+    }
+  }
 
   .animate-neon-the {
     animation: flicker 3.2s infinite steps(60)
@@ -61,4 +70,3 @@ body {
     animation-delay: 0.4s;
   }
 }
-

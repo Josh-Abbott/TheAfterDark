@@ -3,27 +3,16 @@
 import { useState } from "react";
 import Link from "next/link";
 
-const sports = ["Football", "Men's Basketball", "Baseball", "Soccer"];
-const teams = ["Boise State", "Colorado State", "Fresno State", "Gonzaga", "Oregon State", "San Diego State", "Texas State", "Utah State", "Washington State"]
+import { PAC_SPORTS } from "@/lib/pac12Sports";
+import { PAC_TEAMS } from "@/lib/pac12Teams";
 
 const Navbar = () => {
   const [openDropdown, setOpenDropdown] = useState<'sports' | 'teams' | null>(null);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-  interface DropdownType {
-    sports: 'sports';
-    teams: 'teams';
-  }
-
-  type DropdownName = DropdownType[keyof DropdownType] | null;
-
-  const toggleDropdown = (name: DropdownName): void => {
-    setOpenDropdown(openDropdown === name ? null : name);
-  };
-
   return (
     <header className="relative bg-slate-900 text-white h-16">
-      <nav className="flex items-center justify-between p-4 max-w-7xl mx-auto">
+      <nav className="flex items-center justify-between max-w-7xl mx-auto">
         <Link href="/" className="font-bold text-xl">The After Dark</Link>
 
         {/* Mobile Toggle */}
@@ -34,13 +23,21 @@ const Navbar = () => {
         <ul className={`${isMobileMenuOpen ? 'flex' : 'hidden'} md:flex flex-col md:flex-row absolute md:relative top-full left-0 w-full md:w-auto bg-slate-900 md:items-center gap-4 p-4 md:p-0 z-50`}>
 
           {/* Sport Dropdown*/}
-          <li className="relative">
-            <button onClick={() => toggleDropdown('sports')} className="hover:text-blue-400">
-              Sports ▾
-            </button>
+          <li
+            className="relative h-16 flex items-center"
+            onMouseEnter={() => setOpenDropdown('sports')}
+            onMouseLeave={() => setOpenDropdown(null)}
+          >
+            <Link
+              href="/sports"
+              className="flex items-center h-16 px-4 font-bold hover:text-blue-400"
+            >
+              Sports
+            </Link>
+
             {openDropdown === 'sports' && (
-              <ul className="md:absolute left-0 mt-2 w-48 bg-slate-800 rounded shadow-lg max-h-64 overflow-y-auto z-50">
-                {sports.map((sport) => (
+              <ul className="absolute top-full left-0 w-48 bg-slate-800 rounded shadow-lg max-h-64 overflow-y-auto z-50">
+                {PAC_SPORTS.map((sport) => (
                   <li key={sport}>
                     <Link
                       href={`/sports/${sport.toLowerCase().replace(/\s+/g, '-').replace(/'/g, '')}`}
@@ -54,14 +51,23 @@ const Navbar = () => {
             )}
           </li>
 
+
           {/* Team Dropdown */}
-          <li className="relative">
-            <button onClick={() => toggleDropdown('teams')} className="hover:text-blue-400">
-              Teams ▾
-            </button>
+          <li
+            className="relative h-16 flex items-center"
+            onMouseEnter={() => setOpenDropdown('teams')}
+            onMouseLeave={() => setOpenDropdown(null)}
+          >
+            <Link
+              href="/teams"
+              className="flex items-center h-16 px-4 font-bold hover:text-blue-400"
+            >
+              Teams
+            </Link>
+
             {openDropdown === 'teams' && (
-              <ul className="md:absolute left-0 mt-2 w-48 bg-slate-800 rounded shadow-lg max-h-64 overflow-y-auto z-50">
-                {teams.map((team) => (
+              <ul className="absolute top-full left-0 w-48 bg-slate-800 rounded shadow-lg max-h-64 overflow-y-auto z-50">
+                {PAC_TEAMS.map((team) => (
                   <li key={team}>
                     <Link
                       href={`/teams/${team.toLowerCase().replace(/\s+/g, '-').replace(/'/g, '')}`}
@@ -75,9 +81,10 @@ const Navbar = () => {
             )}
           </li>
 
+
           {/* Standard Links */}
-          <li><Link href="/big-board" className="hover:text-blue-400">Big Board</Link></li>
-          <li><Link href="/polls" className="hover:text-blue-400">Polls</Link></li>
+          <li><Link href="/big-board" className="hover:text-blue-400 py-2 px-4 ">Big Board</Link></li>
+          <li><Link href="/polls" className="hover:text-blue-400 py-2 px-4 ">Polls</Link></li>
         </ul>
       </nav>
     </header>
