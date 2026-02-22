@@ -45,8 +45,8 @@ const TodaysGames = () => {
         new Date(a.startTime).getTime() -
         new Date(b.startTime).getTime()
       );
-    });
-
+    }
+  );
 
   return (
     <section className="px-6 py-16">

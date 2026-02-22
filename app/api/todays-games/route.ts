@@ -32,7 +32,7 @@ export async function GET() {
 
         const requests = SPORTS.map((sport) =>
             fetch(
-                `${ESPN_BASE}/${sport.path}/scoreboard?dates=${formattedDate}`,
+                `${ESPN_BASE}/${sport.path}/scoreboard?dates=${formattedDate}&groups=50`,
                 { next: { revalidate: 300 } } // 5 minute cache (change to lower?)
             ).then((res) => res.json())
         );
@@ -76,7 +76,7 @@ export async function GET() {
             PAC_TEAMS.some(team => game.awayTeam.name.includes(team))
         );
 
-        return NextResponse.json(games);
+        return NextResponse.json(pac12Games);
     } catch (error) {
         console.error("Error fetching games:", error);
         return NextResponse.json(

@@ -24,13 +24,17 @@ const Navbar = () => {
 
           {/* Sport Dropdown*/}
           <li
-            className="relative h-16 flex items-center"
-            onMouseEnter={() => setOpenDropdown('sports')}
-            onMouseLeave={() => setOpenDropdown(null)}
+            className="relative h-16"
+            onMouseEnter={() => {
+              if (window.innerWidth >= 768) setOpenDropdown('sports');
+            }}
+            onMouseLeave={() => {
+              if (window.innerWidth >= 768) setOpenDropdown(null);
+            }}
           >
             <Link
               href="/sports"
-              className="flex items-center h-16 px-4 font-bold hover:text-blue-400"
+              className="flex items-center h-16 px-4 hover:text-blue-400"
             >
               Sports
             </Link>
@@ -54,13 +58,17 @@ const Navbar = () => {
 
           {/* Team Dropdown */}
           <li
-            className="relative h-16 flex items-center"
-            onMouseEnter={() => setOpenDropdown('teams')}
-            onMouseLeave={() => setOpenDropdown(null)}
+            className="relative h-16"
+            onMouseEnter={() => {
+              if (window.innerWidth >= 768) setOpenDropdown('teams');
+            }}
+            onMouseLeave={() => {
+              if (window.innerWidth >= 768) setOpenDropdown(null);
+            }}
           >
             <Link
               href="/teams"
-              className="flex items-center h-16 px-4 font-bold hover:text-blue-400"
+              className="flex items-center h-16 px-4 hover:text-blue-400"
             >
               Teams
             </Link>
@@ -83,8 +91,8 @@ const Navbar = () => {
 
 
           {/* Standard Links */}
-          <li><Link href="/big-board" className="hover:text-blue-400 py-2 px-4 ">Big Board</Link></li>
-          <li><Link href="/polls" className="hover:text-blue-400 py-2 px-4 ">Polls</Link></li>
+          <li><Link href="/big-board" className="hover:text-blue-400 relative h-16 py-2 px-4 flex items-center">Big Board</Link></li>
+          <li><Link href="/polls" className="hover:text-blue-400 relative h-16 py-2 px-4 flex items-center">Polls</Link></li>
         </ul>
       </nav>
     </header>
