@@ -76,7 +76,7 @@ export async function GET() {
             PAC_TEAMS.some(team => game.awayTeam.name.includes(team))
         );
 
-        return NextResponse.json(pac12Games);
+        return NextResponse.json(games);
     } catch (error) {
         console.error("Error fetching games:", error);
         return NextResponse.json(

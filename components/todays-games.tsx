@@ -7,7 +7,15 @@ const TodaysGames = () => {
 
   if (loading) return <p className="text-center text-neutral-400">Loading games...</p>;
   if (games.length === 0)
-    return <p className="text-center text-neutral-400">No games tonight.</p>;
+    return (
+      <section>
+        <h2 className="text-3xl font-bold text-center mb-12">
+          Today's Games
+        </h2>
+
+        <p className="text-center text-neutral-400">No games tonight.</p>
+      </section>
+    );
 
   const groupedGames = games.reduce<Record<string, typeof games>>(
     (acc, game) => {
@@ -46,7 +54,7 @@ const TodaysGames = () => {
         new Date(b.startTime).getTime()
       );
     }
-  );
+    );
 
   return (
     <section className="px-6 py-16">
@@ -57,9 +65,7 @@ const TodaysGames = () => {
       <div className="max-w-4xl mx-auto space-y-12">
         {Object.entries(groupedGames).map(([sport, sportGames]) => {
           const sorted = sortGames(sportGames);
-
-          console.log(sport, sorted.map(g => g.status));
-
+          
           return (
             <div key={sport}>
               <h3 className="text-sm uppercase tracking-wider text-neutral-400 mb-4">
