@@ -76,12 +76,12 @@ const Navbar = () => {
             {openDropdown === 'teams' && (
               <ul className="absolute top-full left-0 w-48 bg-slate-800 rounded shadow-lg max-h-64 overflow-y-auto z-50">
                 {PAC_TEAMS.map((team) => (
-                  <li key={team}>
+                  <li key={team.name}>
                     <Link
-                      href={`/teams/${team.toLowerCase().replace(/\s+/g, '-').replace(/'/g, '')}`}
+                      href={`/teams/${team.name.toLowerCase().replace(/\s+/g, '-').replace(/'/g, '')}`}
                       className="block px-4 py-2 hover:bg-slate-700"
                     >
-                      {team}
+                      {team.name}
                     </Link>
                   </li>
                 ))}
