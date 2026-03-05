@@ -1,9 +1,9 @@
-import TodaysGames from "@/components/todays-games";
+import TodaysGames from "@/components/todaysGames";
+import AutoRefresh from "@/components/autoRefresh";
 
 const Home = async () => {
   return (
     <main className="flex flex-col">
-
       {/* Hero Section */}
       <section className="flex flex-col items-center justify-center min-h-[calc(90vh-4rem)] px-4 text-center">
         <h1 className="text-6xl md:text-8xl font-black text-center text-cyan-300 select-none tracking-widest [text-shadow:0_0_5px_#fff,0_0_10px_#fff,0_0_20px_#22d3ee,0_0_40px_#22d3ee]">
@@ -42,6 +42,7 @@ const Home = async () => {
       </section>
 
       {/* Today's Games */}
+      <AutoRefresh interval={60000} />
       <TodaysGames />
     </main>
   )

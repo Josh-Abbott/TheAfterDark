@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-import { PAC_SPORTS } from "@/lib/pac12Sports";
+import { PAC_SPORTS } from "@/lib/config/pac12Sports";
 
 const Sports = async () => {
   return (

@@ -3,8 +3,8 @@
 import { useState } from "react";
 import Link from "next/link";
 
-import { PAC_SPORTS } from "@/lib/pac12Sports";
-import { PAC_TEAMS } from "@/lib/pac12Teams";
+import { PAC_SPORTS } from "@/lib/config/pac12Sports";
+import { PAC_TEAMS } from "@/lib/config/pac12Teams";
 
 const Navbar = () => {
   const [openDropdown, setOpenDropdown] = useState<'sports' | 'teams' | null>(null);

@@ -1,4 +1,4 @@
-import { PAC_TEAMS } from "@/lib/pac12Teams";
+import { PAC_TEAMS } from "@/lib/config/pac12Teams";
 
 import Header from "@/components/team-components/header";
 
@@ -24,7 +24,6 @@ const TeamSport = async ({ params }: { params: Promise<{ team: string, sport: st
         <h1>{teamData?.name} - {sportName}</h1>
       </div>
       <Header team={teamData?.name} sport={sportName} />
-
     </main>
   );
 };

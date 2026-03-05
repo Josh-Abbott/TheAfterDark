@@ -1,27 +1,24 @@
-"use client";
+import { getTodaysGames } from "@/lib/services/todaysGames";
 
-import { useTodaysGames } from "@/hooks/todays-games";
+const TodaysGames = async () => {
+  const games = await getTodaysGames();
 
-const TodaysGames = () => {
-  const { games, loading } = useTodaysGames();
-
-  if (loading) return <p className="text-center text-neutral-400">Loading games...</p>;
-  if (games.length === 0)
+  if (games.length === 0) {
     return (
       <section>
         <h2 className="text-3xl font-bold text-center mb-12">
           Today's Games
         </h2>
-
-        <p className="text-center text-neutral-400">No games tonight.</p>
+        <p className="text-center text-neutral-400">
+          No games tonight.
+        </p>
       </section>
     );
+  }
 
   const groupedGames = games.reduce<Record<string, typeof games>>(
     (acc, game) => {
-      if (!acc[game.sport]) {
-        acc[game.sport] = [];
-      }
+      if (!acc[game.sport]) acc[game.sport] = [];
       acc[game.sport].push(game);
       return acc;
     },
@@ -43,18 +40,17 @@ const TodaysGames = () => {
         }
       };
 
-      const priorityDiff =
+      const diff =
         getPriority(a.status) - getPriority(b.status);
 
-      if (priorityDiff !== 0) return priorityDiff;
+      if (diff !== 0) return diff;
 
       // if all games have same status, sort by start time
       return (
         new Date(a.startTime).getTime() -
         new Date(b.startTime).getTime()
       );
-    }
-    );
+    });
 
   return (
     <section className="px-6 py-16">
@@ -65,7 +61,7 @@ const TodaysGames = () => {
       <div className="max-w-4xl mx-auto space-y-12">
         {Object.entries(groupedGames).map(([sport, sportGames]) => {
           const sorted = sortGames(sportGames);
-          
+
           return (
             <div key={sport}>
               <h3 className="text-sm uppercase tracking-wider text-neutral-400 mb-4">
@@ -82,15 +78,15 @@ const TodaysGames = () => {
                     <div className="font-medium">
                       {game.awayTeam.rank && (
                         <span className="text-yellow-400 mr-1">
-                          #{game.awayTeam.rank} </span>
+                          #{game.awayTeam.rank}
+                        </span>
                       )}
                       {game.awayTeam.name}
-
-                      <span className="mx-2 text-neutral-500"> @ </span>
-
+                      <span className="mx-2 text-neutral-500">@</span>
                       {game.homeTeam.rank && (
                         <span className="text-yellow-400 mr-1">
-                          #{game.homeTeam.rank} </span>
+                          #{game.homeTeam.rank}
+                        </span>
                       )}
                       {game.homeTeam.name}
                     </div>
@@ -98,24 +94,36 @@ const TodaysGames = () => {
                     {/* Time / Score */}
                     <div className="text-neutral-400 whitespace-nowrap">
                       {game.status === "STATUS_SCHEDULED" && (
-                        new Date(game.startTime).toLocaleTimeString([], {
-                          hour: "2-digit",
-                          minute: "2-digit",
-                        })
+                        <>
+                          {new Date(game.startTime).toLocaleTimeString([], {
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          })}
+                          {game.network && (
+                            <span className="ml-2 text-neutral-500">
+                              · {game.network}
+                            </span>
+                          )}
+                        </>
                       )}
 
                       {game.status === "STATUS_IN_PROGRESS" && (
-                        <span className="text-white font-semibold">
-                          LIVE
-                        </span>
+                        <>
+                          <span className="text-white font-semibold">LIVE</span>
+                          {game.network && (
+                            <span className="ml-2 text-neutral-500">
+                              · {game.network}
+                            </span>
+                          )}
+                        </>
                       )}
 
                       {game.status === "STATUS_FINAL" && (
                         <span className="text-neutral-300">
-                          Final {game.awayTeam.score} – {game.homeTeam.score}
+                          Final {game.awayTeam.score} –{" "}
+                          {game.homeTeam.score}
                         </span>
                       )}
-
                     </div>
                   </div>
                 ))}
@@ -126,6 +134,6 @@ const TodaysGames = () => {
       </div>
     </section>
   );
-};
+}
 
 export default TodaysGames;

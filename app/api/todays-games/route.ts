@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 
-import { PAC_TEAMS } from "@/lib/pac12Teams";
+import { PAC_TEAMS } from "@/lib/config/pac12Teams";
 
 const ESPN_BASE = "https://site.api.espn.com/apis/site/v2/sports"; // BASE URL, CAN REUSE FOR OTHER ENDPOINTS
 const SPORTS = [ // Homepage games only include football, MBB, WBB but can add more if wanted
