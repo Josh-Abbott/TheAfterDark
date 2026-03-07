@@ -1,6 +1,6 @@
 import { PAC_TEAMS } from "@/lib/config/pac12Teams";
 
-import Header from "@/components/team-components/header";
+import HeaderBB from "@/components/team-components/headerBB";
 
 const TeamSport = async ({ params }: { params: Promise<{ team: string, sport: string }> }) => {
   const { team: teamURL, sport: sportURL } = await params;
@@ -20,10 +20,7 @@ const TeamSport = async ({ params }: { params: Promise<{ team: string, sport: st
 
   return (
     <main className="flex flex-col w-full min-h-[calc(90vh-4rem)] justify-top items-center px-4 py-16">
-      <div className="justify-center text-center text-3xl md:text-4xl align-top mb-8">
-        <h1>{teamData?.name} - {sportName}</h1>
-      </div>
-      <Header team={teamData?.name} sport={sportName} />
+      <HeaderBB team={teamData?.name} sport={sportName} />
     </main>
   );
 };

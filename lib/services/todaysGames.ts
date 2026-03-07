@@ -1,7 +1,7 @@
 import { SPORTS } from "@/lib/config/sportEndpoints";
 import { getScoreboard } from "@/lib/espn/scoreboard";
 import { formatDateForESPN } from "@/lib/utils";
-import { transformScoreboard } from "@/lib/transformers/scoreboard";
+import { transformScoreboard } from "@/lib/transformers/todaysGames";
 
 export async function getTodaysGames() {
   const date = formatDateForESPN();
