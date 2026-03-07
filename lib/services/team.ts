@@ -22,9 +22,6 @@ export async function getTeamData(teamName: string, sportName: string) {
     getSchedule(sport.path, team.id)
   ]);
 
-  console.log("Schedule:", scheduleData);
-  console.log("Team:", teamData);
-
   let transformedTeam;
 
   if (sport.path === "basketball/mens-college-basketball" || sport.path === "basketball/womens-college-basketball") {
