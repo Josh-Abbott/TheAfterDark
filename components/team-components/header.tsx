@@ -1,26 +1,24 @@
-import { getTeamData } from "@/lib/services/team";
-
 interface HeaderProps {
+  teamInfo: any,
   team: string;
   sport: string;
 }
 
-async function Header({ team, sport }: HeaderProps) {
-  const teamData = await getTeamData(team, sport);
-  const teamInfo = teamData.team;
+async function Header({ teamInfo, team, sport }: HeaderProps) {
+  const teamData = teamInfo.team;
 
-  const isWin = Math.sign(teamInfo.streak);
+  const isWin = Math.sign(teamData.streak);
 
   return (
     <div className="justify-center text-center text-3xl md:text-4xl align-top mb-8">
       {/* Name/Rank & Sport */}
       <div className="font-bold">
-        {teamInfo.rank && (
+        {teamData.rank && (
           <span className="text-yellow-400 mr-1">
-            #{teamInfo.rank}
+            #{teamData.rank}
           </span>
         )}
-        {teamInfo.name}
+        {teamData.name}
       </div>
       <div className="text-neutral-400">
         {sport}
@@ -28,12 +26,13 @@ async function Header({ team, sport }: HeaderProps) {
       <br />
       {/* Overall Record, Conf. Record, Conf. Standing, W/L Streak */}
       <div className="text-xl text-neutral-400">
-        {teamInfo.record.overall && <span>{teamInfo.record.overall} Overall</span>}
-        {teamInfo.record.conference && <span> | {teamInfo.record.conference} Conference</span>}
-        {teamInfo.standing && <span> | {teamInfo.standing}</span>}
-        {teamInfo.streak != null && (
-          <span> | Streak: {Math.abs(teamInfo.streak)}</span>
+        {teamData.record.overall && <span>{teamData.record.overall} Overall</span>}
+        {teamData.record.conference && <span> | {teamData.record.conference} Conference</span>}
+        {teamData.standing && <span> | {teamData.standing}</span>}
+        {teamData.streak != null && (
+          <span> | Streak: {Math.abs(teamData.streak)}</span>
         )}
+
         {/* Streak Arrow Logic */}
         {isWin !== 0 && (
           <svg
@@ -57,33 +56,33 @@ async function Header({ team, sport }: HeaderProps) {
       </div>
       {/* Last Game Info */}
       <div className="text-sm text-neutral-500">
-        {teamInfo.lastGame && (
+        {teamData.lastGame && (
           <span>
             Last Game:
-            {teamInfo.lastGame.oppWin ? (
+            {teamData.lastGame.oppWin ? (
               <span className="text-red-500"> L </span>
             ) : (
               <span className="text-green-500"> W </span>
             )}
-            {teamInfo.lastGame.mainScore}-{teamInfo.lastGame.oppScore}
-            {teamInfo.lastGame.homeAway === "home" ? (
+            {teamData.lastGame.mainScore}-{teamData.lastGame.oppScore}
+            {teamData.lastGame.homeAway === "home" ? (
               " vs "
             ) : (
               " @ "
-            )} {teamInfo.lastGame.oppTeam} ({teamInfo.lastGame.date})
+            )} {teamData.lastGame.oppTeam} ({teamData.lastGame.date})
           </span>
         )}
       </div>
       {/* Next Game Info */}
       <div className="text-sm text-neutral-500">
-        {teamInfo.nextGame && (
+        {teamData.nextGame && (
           <span>
             Next Game:
-            {teamInfo.nextGame.homeAway === "home" ? (
+            {teamData.nextGame.homeAway === "home" ? (
               " vs "
             ) : (
               " @ "
-            )} {teamInfo.nextGame.oppTeam} ({teamInfo.nextGame.date} - {teamInfo.nextGame.time})
+            )} {teamData.nextGame.oppTeam} ({teamData.nextGame.date} - {teamData.nextGame.time})
           </span>
         )}
       </div>
