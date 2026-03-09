@@ -1,4 +1,5 @@
 // Centralized config for sports and their corresponding ESPN API paths
+// showonHomepage indicates what games are shown on the "Today's Games" section of the homepage
 
 export const SPORTS = {
   football: {

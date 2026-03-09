@@ -1,6 +1,6 @@
-import { getLastGame, getNextGame, parseGame, normalizeRank, calculateStreak } from "@/lib/utils";
+import { getLastGame, getNextGame, parseGame, normalizeRank, calculateRecord, calculateStreak } from "@/lib/utils";
 
-export function transformFB(teamData: any, scheduleData: any) {
+export function transformBaseB(teamData: any, scheduleData: any) {
   const team = teamData.team;
   const events = scheduleData.events;
 
@@ -10,14 +10,17 @@ export function transformFB(teamData: any, scheduleData: any) {
   const lastGameParsed = parseGame(lastGame, team.id);
   const nextGameParsed = nextGame ? parseGame(nextGame, team.id) : null;
 
+  console.log("Last Game:", lastGameParsed);
+  console.log("Next Game:", nextGameParsed);
+
   return {
     id: team.id,
     name: team.displayName,
-    logo: team.logos[0].href,
+    logo: team.logo,
     color: team.color,
     record: {
-      overall: lastGameParsed.mainTeam.record[0].displayValue,
-      conference: lastGameParsed.mainTeam.record[1].displayValue,
+      overall: calculateRecord(events, team.id, "Baseball"),
+      conference: calculateRecord(events, team.id, "Baseball", true),
     },
     streak: calculateStreak(events, team.id),
     standing: team.standingSummary,

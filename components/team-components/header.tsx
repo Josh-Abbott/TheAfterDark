@@ -28,9 +28,12 @@ async function Header({ team, sport }: HeaderProps) {
       <br />
       {/* Overall Record, Conf. Record, Conf. Standing, W/L Streak */}
       <div className="text-xl text-neutral-400">
-        <span>
-          {teamInfo.record.overall} Overall | {teamInfo.record.conference} Conference | {teamInfo.standing} | Streak: {Math.abs(teamInfo.streak)}
-        </span>
+        {teamInfo.record.overall && <span>{teamInfo.record.overall} Overall</span>}
+        {teamInfo.record.conference && <span> | {teamInfo.record.conference} Conference</span>}
+        {teamInfo.standing && <span> | {teamInfo.standing}</span>}
+        {teamInfo.streak != null && (
+          <span> | Streak: {Math.abs(teamInfo.streak)}</span>
+        )}
         {/* Streak Arrow Logic */}
         {isWin !== 0 && (
           <svg

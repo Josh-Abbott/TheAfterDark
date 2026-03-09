@@ -10,9 +10,6 @@ export function transformBB(teamData: any, scheduleData: any) {
   const lastGameParsed = parseGame(lastGame, team.id);
   const nextGameParsed = nextGame ? parseGame(nextGame, team.id) : null;
 
-  console.log("Last Game:", lastGameParsed);
-  console.log("Next Game:", nextGameParsed);
-
   return {
     id: team.id,
     name: team.displayName,

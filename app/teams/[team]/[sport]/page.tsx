@@ -9,8 +9,9 @@ const TeamSport = async ({ params }: { params: Promise<{ team: string, sport: st
   const teamData = PAC_TEAMS.find(t =>
     t.name.toLowerCase().replace(/\s+/g, '-') === teamURL
   );
+  
   const sportName = teamData?.sports.find(s =>
-    s.toLowerCase().replace(/\s+/g, '-').replace(/'/g, '') === sportURL
+    s.name.toLowerCase().replace(/\s+/g, '-').replace(/'/g, '') === sportURL
   );
 
   // Required by code otherwise error
@@ -20,7 +21,7 @@ const TeamSport = async ({ params }: { params: Promise<{ team: string, sport: st
 
   return (
     <main className="flex flex-col w-full min-h-[calc(90vh-4rem)] justify-top items-center px-4 py-16">
-      <Header team={teamData?.name} sport={sportName} />
+      <Header team={teamData?.name} sport={sportName.name} />
     </main>
   );
 };
