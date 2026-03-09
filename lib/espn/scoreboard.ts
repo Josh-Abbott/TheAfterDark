@@ -1,5 +1,9 @@
 import { fetchESPN } from "./client";
 
-export async function getScoreboard(sportPath: string, date: string) {
-  return fetchESPN(`${sportPath}/scoreboard?dates=${date}&groups=50`);
+export async function getScoreboard(sportPath: string, date: string, filterbyTeamId?: number) {
+  let url = `${sportPath}/scoreboard?dates=${date}&groups=50`;
+  if (filterbyTeamId) {
+    url += `&teamId=${filterbyTeamId}`;
+  }
+  return fetchESPN(url);
 }

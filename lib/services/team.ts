@@ -3,6 +3,7 @@ import { PAC_TEAMS } from "@/lib/config/pac12Teams";
 import { getSchedule } from "@/lib/espn/schedule";
 import { getTeam } from "@/lib/espn/team";
 import { transformBB } from "@/lib/transformers/teamBB";
+import { transformFB } from "@/lib/transformers/teamFB";
 
 export async function getTeamData(teamName: string, sportName: string) {
 
@@ -26,6 +27,8 @@ export async function getTeamData(teamName: string, sportName: string) {
 
   if (sport.path === "basketball/mens-college-basketball" || sport.path === "basketball/womens-college-basketball") {
     transformedTeam = transformBB(teamData, scheduleData);
+  } else if (sport.path === "football/college-football") {
+    transformedTeam = transformFB(teamData, scheduleData);
   } else {
     throw new Error(`No transformer found for sport: ${sport.path}`);
   }

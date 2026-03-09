@@ -31,7 +31,7 @@ export function getNextGame(events: any[]) {
 }
 
 // Parses a game to extract relevant info for team page
-export function parseMBBGame(event: any, teamId: number) {
+export function parseGame(event: any, teamId: number) {
   const competition = event.competitions[0];
 
   const team = competition.competitors.find(
@@ -46,4 +46,35 @@ export function parseMBBGame(event: any, teamId: number) {
     mainTeam: team,
     oppTeam: opponent,
   };
+}
+
+// Calculates current team's streak if info isn't provided in API
+export function calculateStreak(events: any[], teamId: number): number {
+  const completed = events
+    .filter((e) => e.competitions[0].status.type.completed)
+    .reverse(); // most recent first
+
+  if (completed.length === 0) return 0;
+
+  let streak = 0;
+  let direction: number | null = null;
+
+  for (const event of completed) {
+    const comp = event.competitions[0];
+    const team = comp.competitors.find((c: any) => c.team.id == teamId);
+
+    const result = team.winner ? 1 : -1;
+
+    if (direction === null) {
+      direction = result;
+    }
+
+    if (result !== direction) {
+      break;
+    }
+
+    streak += result;
+  }
+
+  return streak;
 }
