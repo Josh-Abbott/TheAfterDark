@@ -16,7 +16,6 @@ const TeamSport = async ({ params }: { params: Promise<{ team: string, sport: st
     s.name.toLowerCase().replace(/\s+/g, '-').replace(/'/g, '') === sportURL
   );
 
-  // Required by code otherwise error
   if (!teamData || !sportName) {
     return <div>Loading team data...</div>;
   }
@@ -28,7 +27,7 @@ const TeamSport = async ({ params }: { params: Promise<{ team: string, sport: st
       <Header teamInfo={teamInfo} team={teamData?.name} sport={sportName.name} />
       <TeamTabs
         teamInfo={teamInfo}
-        team={teamData.name}
+        team={teamData?.name}
         sport={sportName.name}
       />
     </main>
