@@ -1,9 +1,6 @@
 import { normalizeRank } from "@/lib/utils";
 
-export function transformScoreboard (
-  data: any,
-  sportLabel: string
-) {
+export function transformScoreboard (data: any,sportLabel: string) {
   if (!data.events) return [];
 
   return data.events.map((event: any) => {

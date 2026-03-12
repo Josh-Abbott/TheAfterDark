@@ -1,10 +1,9 @@
 interface HeaderProps {
   teamInfo: any,
-  team: string;
   sport: string;
 }
 
-async function Header({ teamInfo, team, sport }: HeaderProps) {
+async function Header({ teamInfo, sport }: HeaderProps) {
   const teamData = teamInfo.team;
 
   const isWin = Math.sign(teamData.streak);
@@ -24,6 +23,7 @@ async function Header({ teamInfo, team, sport }: HeaderProps) {
         {sport}
       </div>
       <br />
+
       {/* Overall Record, Conf. Record, Conf. Standing, W/L Streak */}
       <div className="text-xl text-neutral-400">
         {teamData.record.overall && <span>{teamData.record.overall} Overall</span>}
@@ -54,6 +54,7 @@ async function Header({ teamInfo, team, sport }: HeaderProps) {
           </svg>
         )}
       </div>
+
       {/* Last Game Info */}
       <div className="text-sm text-neutral-500">
         {teamData.lastGame && (
@@ -73,6 +74,7 @@ async function Header({ teamInfo, team, sport }: HeaderProps) {
           </span>
         )}
       </div>
+      
       {/* Next Game Info */}
       <div className="text-sm text-neutral-500">
         {teamData.nextGame && (

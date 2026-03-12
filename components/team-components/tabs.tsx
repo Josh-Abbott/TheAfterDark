@@ -1,6 +1,6 @@
 "use client";
 
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 
 import { FB_TABS } from "@/lib/config/teamTabs/footballTabs";
@@ -8,11 +8,10 @@ import { BB_TABS } from "@/lib/config/teamTabs/basketballTabs";
 
 type TabsProps = {
   teamInfo: any;
-  team: string;
   sport: string;
 };
 
-const TeamTabs = ({ teamInfo, team, sport }: TabsProps) => {
+const TeamTabs = ({ teamInfo, sport }: TabsProps) => {
   const tabs =
     sport.toLowerCase() === "football"
       ? FB_TABS

@@ -24,10 +24,9 @@ const TeamSport = async ({ params }: { params: Promise<{ team: string, sport: st
 
   return (
     <main className="flex flex-col w-full min-h-[calc(90vh-4rem)] justify-top items-center px-4 py-16">
-      <Header teamInfo={teamInfo} team={teamData?.name} sport={sportName.name} />
+      <Header teamInfo={teamInfo} sport={sportName.name} />
       <TeamTabs
         teamInfo={teamInfo}
-        team={teamData?.name}
         sport={sportName.name}
       />
     </main>

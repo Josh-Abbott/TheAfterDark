@@ -71,7 +71,7 @@ export async function GET() {
       });
     });
 
-    const pac12Games = games.filter((game) =>
+    const pac12Games = games.filter((game) => // temp unused for testing
       PAC_TEAMS.some(team => game.homeTeam.name.includes(team.name)) ||
       PAC_TEAMS.some(team => game.awayTeam.name.includes(team))
     );

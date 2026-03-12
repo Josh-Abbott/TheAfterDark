@@ -43,7 +43,7 @@ export const useTodaysGames = () => {
   useEffect(() => {
     fetchGames(true);
 
-    // Poll every 60 seconds
+    // Poll every 60 seconds, could change?
     const interval = setInterval(() => {
       fetchGames(false);
     }, 60000);
