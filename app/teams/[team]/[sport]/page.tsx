@@ -2,6 +2,7 @@ import { PAC_TEAMS } from "@/lib/config/pac12Teams";
 import { getTeamData } from "@/lib/services/team";
 
 import Header from "@/components/team-components/header";
+import TeamTabs from "@/components/team-components/tabs";
 
 const TeamSport = async ({ params }: { params: Promise<{ team: string, sport: string }> }) => {
   const { team: teamURL, sport: sportURL } = await params;
@@ -25,6 +26,11 @@ const TeamSport = async ({ params }: { params: Promise<{ team: string, sport: st
   return (
     <main className="flex flex-col w-full min-h-[calc(90vh-4rem)] justify-top items-center px-4 py-16">
       <Header teamInfo={teamInfo} team={teamData?.name} sport={sportName.name} />
+      <TeamTabs
+        teamInfo={teamInfo}
+        team={teamData.name}
+        sport={sportName.name}
+      />
     </main>
   );
 };
