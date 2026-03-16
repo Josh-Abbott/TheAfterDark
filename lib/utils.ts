@@ -121,3 +121,50 @@ export function calculateRecord(events: any[], teamId: number, sportName: string
 
   return `${wins}-${losses}`;
 }
+
+// Search for most recent/current coach and gather info on them from CFBD data (FOOTBALL ONLY FOR NOW)
+export function getCurrentCoachInfo(coachesData: any[]) {
+  let latestYear = 0;
+
+  for (const coach of coachesData) {
+    for (const season of coach.seasons || []) {
+      if (season.year > latestYear) {
+        latestYear = season.year;
+      }
+    }
+  }
+
+  const currentCoach = coachesData.find(coach =>
+    coach.seasons?.some((season: { year: number; }) => season.year === latestYear)
+  );
+
+  if (!currentCoach) return null;
+
+  return {
+    name: `${currentCoach.firstName} ${currentCoach.lastName}`,
+    firstYear: Math.min(...currentCoach.seasons.map((s: any) => s.year)),
+    tenure: currentCoach.seasons.length
+  };
+}
+
+// Iterate through the /records CFBD data to calculate all time record (FOOTBALL ONLY FOR NOW)
+export function calculateAllTimeRecord(recordsData: any[]) {
+  let total = 0;
+  let wins = 0;
+  let losses = 0;
+  let ties = 0;
+
+  for (const season of recordsData) {
+    total += season.total.games ?? 0;
+    wins += season.total.wins ?? 0;
+    losses += season.total.losses ?? 0;
+    ties += season.total.ties ?? 0;
+  }
+
+  return {
+    total,
+    wins,
+    losses,
+    ties,
+  };
+}

@@ -1,7 +1,12 @@
 import { SPORTS } from "@/lib/config/sportEndpoints";
 import { PAC_TEAMS } from "@/lib/config/pac12Teams";
+
 import { getSchedule } from "@/lib/espn/schedule";
 import { getTeam } from "@/lib/espn/team";
+import { getCoachesInfo } from "@/lib/cfbd/coaches";
+import { getRecordInfo } from "@/lib/cfbd/records";
+import { getMatchupInfo } from "../cfbd/matchup";
+
 import { transformBB } from "@/lib/transformers/teamBB";
 import { transformFB } from "@/lib/transformers/teamFB";
 import { transformBaseB } from "@/lib/transformers/teamBaseB";
@@ -35,14 +40,23 @@ export async function getTeamData(teamName: string, sportName: string) {
   if (sport.path === "basketball/mens-college-basketball" || sport.path === "basketball/womens-college-basketball") {
     transformedTeam = transformBB(teamData, scheduleData);
   } else if (sport.path === "football/college-football") {
-    transformedTeam = transformFB(teamData, scheduleData);
+
+    const rival = team.rivalries?.football;
+
+    const [coachesData, recordData, matchupData] = await Promise.all([
+      getCoachesInfo(teamName),
+      getRecordInfo(teamName),
+      rival ? getMatchupInfo(teamName, rival) : Promise.resolve(null)
+    ]);
+
+    transformedTeam = transformFB(teamData, scheduleData, coachesData, recordData, matchupData, team);
   } else if (sport.path === "baseball/college-baseball") {
     transformedTeam = transformBaseB(teamData, scheduleData);
   } else {
-  throw new Error(`No transformer found for sport: ${sport.path}`);
-}
+    throw new Error(`No transformer found for sport: ${sport.path}`);
+  }
 
-return {
-  team: transformedTeam,
-};
+  return {
+    team: transformedTeam,
+  };
 }

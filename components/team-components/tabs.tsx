@@ -8,12 +8,12 @@ import { BB_TABS } from "@/lib/config/teamTabs/basketballTabs";
 
 type TabsProps = {
   teamInfo: any;
-  sport: string;
+  sport: any;
 };
 
 const TeamTabs = ({ teamInfo, sport }: TabsProps) => {
   const tabs =
-    sport.toLowerCase() === "football"
+    sport.name.toLowerCase() === "football"
       ? FB_TABS
       : BB_TABS;
 

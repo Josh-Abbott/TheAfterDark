@@ -12,22 +12,22 @@ const TeamSport = async ({ params }: { params: Promise<{ team: string, sport: st
     t.name.toLowerCase().replace(/\s+/g, '-') === teamURL
   );
 
-  const sportName = teamData?.sports.find(s =>
+  const sportData = teamData?.sports.find(s =>
     s.name.toLowerCase().replace(/\s+/g, '-').replace(/'/g, '') === sportURL
   );
 
-  if (!teamData || !sportName) {
+  if (!teamData || !sportData) {
     return <div>Loading team data...</div>;
   }
 
-  const teamInfo = await getTeamData(teamData?.name, sportName.name);
+  const teamInfo = await getTeamData(teamData?.name, sportData.name);
 
   return (
     <main className="flex flex-col w-full min-h-[calc(90vh-4rem)] justify-top items-center px-4 py-16">
-      <Header teamInfo={teamInfo} sport={sportName.name} />
+      <Header teamInfo={teamInfo} sport={sportData.name} />
       <TeamTabs
         teamInfo={teamInfo}
-        sport={sportName.name}
+        sport={sportData}
       />
     </main>
   );
