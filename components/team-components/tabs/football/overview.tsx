@@ -44,7 +44,7 @@ function Overview({ teamInfo, sport }: HeaderProps) {
             All-Time Record
           </h3>
           <p className="text-xl font-semibold">{teamData.atRecord}</p>
-          <p className="text-sm text-gray-500">{teamData.winPct.toFixed(3)} Win %</p>
+          <p className="text-sm text-gray-500">{teamData.winPct.toFixed(3).replace(/^0/, "")} Win %</p>
         </div>
 
         {/* Program Founded */}
@@ -62,7 +62,7 @@ function Overview({ teamInfo, sport }: HeaderProps) {
             Primary Rival
           </h3>
           <p className="text-xl font-semibold">{teamData.rival}</p>
-          <p className="text-sm text-gray-500">Series: {teamData.rivalRecord} ({teamData.rivalWinPct.toFixed(3)})</p>
+          <p className="text-sm text-gray-500">Series: {teamData.rivalRecord} ({teamData.rivalWinPct.toFixed(3).replace(/^0/, "")})</p>
         </div>
 
         {/* Location */}
