@@ -1,7 +1,8 @@
-import { getLastGame, getNextGame, parseGame, normalizeRank, calculateStreak, getCurrentCoachInfo, calculateAllTimeRecord } from "@/lib/utils";
-import { match } from "assert";
+import { getCurrentCoachInfo, calculateAllTimeRecord, getSeasonStory } from "@/lib/cfbd/cfbdUtils";
+import { getLastGame, getNextGame, parseGame, normalizeRank } from "@/lib/espn/espnUtils";
+import { calculateStreak } from "@/lib/sports/teamStats"
 
-export function transformFB(teamData: any, scheduleData: any, coachesData: any, recordData: any, matchupData: any, metadata: any) {
+export function transformFB(teamData: any, scheduleData: any, coachesData: any, recordData: any, matchupData: any, spRatingData: any, metadata: any) {
   const team = teamData.team;
   const events = scheduleData.events;
 
@@ -17,6 +18,9 @@ export function transformFB(teamData: any, scheduleData: any, coachesData: any, 
   if (!coachInfo) {
     throw new Error("No coach found for this team!");
   }
+
+  const scoredWins = getSeasonStory(events, team.id, spRatingData);
+  console.log(scoredWins);
 
   return {
     id: team.id,
@@ -35,6 +39,7 @@ export function transformFB(teamData: any, scheduleData: any, coachesData: any, 
       overall: lastGameParsed.mainTeam.record[0].displayValue,
       conference: lastGameParsed.mainTeam.record[1].displayValue,
     },
+
     atRecord: `${allTimeRecord.wins}-${allTimeRecord.losses}-${allTimeRecord.ties}`,
     winPct: (allTimeRecord.wins + (allTimeRecord.ties * 0.5)) / allTimeRecord.total,
 
@@ -45,6 +50,9 @@ export function transformFB(teamData: any, scheduleData: any, coachesData: any, 
     streak: calculateStreak(events, team.id),
     standing: team.standingSummary,
     rank: normalizeRank(lastGameParsed.mainTeam.curatedRank?.current),
+
+    seasonStory: scoredWins,
+
     lastGame: lastGame ? {
       oppTeam: lastGameParsed.oppTeam.team.abbreviation,
       oppWin: lastGameParsed.oppTeam.winner,

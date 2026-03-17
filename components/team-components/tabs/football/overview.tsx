@@ -2,6 +2,8 @@
 // Season story (best win, worst loss, avg. margin of victory, avg. margin of loss, home record, road record), 
 // Program Profile (rivalries, bowl appearances, 5-season trend (bar chart?), 1st round draft picks, etc.)
 
+import { formatDate } from "@/lib/date/dateUtils"
+
 interface HeaderProps {
   teamInfo: any;
   sport: any;
@@ -14,12 +16,12 @@ function Overview({ teamInfo, sport }: HeaderProps) {
   return (
     <div className="max-w-6xl mx-auto px-4">
 
-      {/* Section Title */}
+      {/* About The Program */}
       <h2 className="text-2xl md:text-3xl font-semibold text-center mb-8">
         About the Program
       </h2>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
         {/* Head Coach */}
         <div className="border rounded-lg p-6 text-center">
           <h3 className="text-sm uppercase tracking-wide text-gray-500 mb-2">
@@ -73,8 +75,91 @@ function Overview({ teamInfo, sport }: HeaderProps) {
           <p className="text-xl font-semibold">{teamData.city}, {teamData.state}</p>
           <p className="text-sm text-gray-500">{teamData.school} University</p>
         </div>
+      </div>
+
+      {/* Season Story */}
+      <h2 className="text-2xl md:text-3xl font-semibold text-center mb-8">
+        Season Story
+      </h2>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
+
+        {/* Best Wins */}
+        <div className="border rounded-lg p-6">
+          <h3 className="text-lg font-semibold mb-4">Best Wins</h3>
+          <div className="space-y-3">
+            {teamData.seasonStory.bestWins.length > 0 ? (
+              teamData.seasonStory.bestWins.map((game: any) => (
+                <div key={game.id}>
+                  <p className="text-sm text-gray-500">
+                    {game.homeAway === "away" && "@ "}
+                    {game.homeAway === "home" && "vs "}
+                    {game.opponent}
+                  </p>
+                  <p className="font-medium">{game.teamScore} – {game.opponentScore}</p>
+                  <p className="text-sm text-gray-500">
+                    {formatDate(game.date)}
+                    {game.tags?.length > 0 && " • "}
+                    {game.tags?.join(" • ")}
+                  </p>
+                </div>
+              ))
+            ) : (
+              <p className="text-sm text-gray-500">
+                No notable wins yet
+              </p>
+            )}
+          </div>
+        </div>
+
+        {/* Toughest Losses */}
+        <div className="border rounded-lg p-6">
+          <h3 className="text-lg font-semibold mb-4">Toughest Losses</h3>
+          <div className="space-y-3">
+            {teamData.seasonStory.toughestLosses.length > 0 ? (
+              teamData.seasonStory.toughestLosses.map((game: any) => (
+                <div key={game.id}>
+                  <p className="text-sm text-gray-500">
+                    {game.homeAway === "away" && "@ "}
+                    {game.homeAway === "home" && "vs "}
+                    {game.opponent}
+                  </p>
+                  <p className="font-medium">{game.teamScore} – {game.opponentScore}</p>
+                  <p className="text-sm text-gray-500">
+                    {formatDate(game.date)}
+                    {game.tags?.length > 0 && " • "}
+                    {game.tags?.join(" • ")}
+                  </p>
+                </div>
+              ))
+            ) : (
+              <p className="text-sm text-gray-500">
+                No tough losses yet
+              </p>
+            )}
+          </div>
+        </div>
 
       </div>
+
+      {/* Season Momentum - GRAPH? DOTS LIKE THIS? */}
+      <div className="border rounded-lg p-6 text-center">
+
+        <h3 className="text-lg font-semibold mb-6">Season Momentum</h3>
+
+        <div className="flex justify-center gap-3 flex-wrap">
+
+          <span className="w-10 h-10 flex items-center justify-center rounded bg-green-500 text-white font-bold">W</span>
+          <span className="w-10 h-10 flex items-center justify-center rounded bg-green-500 text-white font-bold">W</span>
+          <span className="w-10 h-10 flex items-center justify-center rounded bg-red-500 text-white font-bold">L</span>
+          <span className="w-10 h-10 flex items-center justify-center rounded bg-green-500 text-white font-bold">W</span>
+          <span className="w-10 h-10 flex items-center justify-center rounded bg-green-500 text-white font-bold">W</span>
+          <span className="w-10 h-10 flex items-center justify-center rounded bg-red-500 text-white font-bold">L</span>
+          <span className="w-10 h-10 flex items-center justify-center rounded bg-green-500 text-white font-bold">W</span>
+
+        </div>
+
+      </div>
+
     </div>
   );
 }

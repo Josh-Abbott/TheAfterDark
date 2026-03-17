@@ -1,4 +1,4 @@
-import { getLastGame, getNextGame, parseGame, normalizeRank } from "@/lib/utils";
+import { getLastGame, getNextGame, parseGame, normalizeRank } from "@/lib/espn/espnUtils";
 
 export function transformBB(teamData: any, scheduleData: any) {
   const team = teamData.team;

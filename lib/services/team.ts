@@ -5,7 +5,8 @@ import { getSchedule } from "@/lib/espn/schedule";
 import { getTeam } from "@/lib/espn/team";
 import { getCoachesInfo } from "@/lib/cfbd/coaches";
 import { getRecordInfo } from "@/lib/cfbd/records";
-import { getMatchupInfo } from "../cfbd/matchup";
+import { getRatingInfo } from "@/lib/cfbd/rating";
+import { getMatchupInfo } from "@/lib/cfbd/matchup";
 
 import { transformBB } from "@/lib/transformers/teamBB";
 import { transformFB } from "@/lib/transformers/teamFB";
@@ -43,13 +44,20 @@ export async function getTeamData(teamName: string, sportName: string) {
 
     const rival = team.rivalries?.football;
 
-    const [coachesData, recordData, matchupData] = await Promise.all([
+    const [coachesData, recordData, spRatingInfo, matchupData] = await Promise.all([
       getCoachesInfo(teamName),
       getRecordInfo(teamName),
+      getRatingInfo("SP+"),
       rival ? getMatchupInfo(teamName, rival) : Promise.resolve(null)
     ]);
 
-    transformedTeam = transformFB(teamData, scheduleData, coachesData, recordData, matchupData, team);
+    const spLookup: Record<string, number> = {}
+
+    spRatingInfo.forEach((team: { team: string | number; rating: any; }) => {
+      spLookup[team.team] = team.rating
+    })
+
+    transformedTeam = transformFB(teamData, scheduleData, coachesData, recordData, matchupData, spLookup, team);
   } else if (sport.path === "baseball/college-baseball") {
     transformedTeam = transformBaseB(teamData, scheduleData);
   } else {

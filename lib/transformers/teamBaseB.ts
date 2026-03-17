@@ -1,4 +1,5 @@
-import { getLastGame, getNextGame, parseGame, normalizeRank, calculateRecord, calculateStreak } from "@/lib/utils";
+import { getLastGame, getNextGame, parseGame, normalizeRank } from "@/lib/espn/espnUtils";
+import { calculateRecord, calculateStreak } from "@/lib/sports/teamStats"
 
 export function transformBaseB(teamData: any, scheduleData: any) {
   const team = teamData.team;

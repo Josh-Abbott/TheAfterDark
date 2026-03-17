@@ -1,4 +1,4 @@
-import { normalizeRank } from "@/lib/utils";
+import { normalizeRank } from "@/lib/espn/espnUtils";
 
 export function transformScoreboard (data: any,sportLabel: string) {
   if (!data.events) return [];
