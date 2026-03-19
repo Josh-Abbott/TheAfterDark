@@ -3,7 +3,7 @@
 // Program Profile (rivalries, bowl appearances, 5-season trend (bar chart?), 1st round draft picks, etc.)
 
 import { formatDate } from "@/lib/date/dateUtils"
-import { Bar, BarChart, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import { Bar, BarChart, Line, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 
 interface HeaderProps {
   teamInfo: any;
@@ -34,13 +34,24 @@ function Overview({ teamInfo, sport }: HeaderProps) {
   const teamData = teamInfo.team;
   const currentDate = new Date();
 
-  const momentumData = teamData.seasonStory.momentum.map((game: any, index: number) => ({
-    game: index + 1,
-    score: game.normalizedScore,
-    opponent: game.opponent,
-    result: game.win ? "W" : "L",
-    date: formatDate(game.date)
-  }));
+  const perfData = teamData.seasonStory.performance.map((game: any, index: number, arr: any[]) => {
+    const windowSize = 3;
+    const start = Math.max(0, index - windowSize + 1);
+    const slice = arr.slice(start, index + 1);
+
+    const trend =
+      slice.reduce((sum: number, g: any) => sum + g.normalizedScore, 0) /
+      slice.length;
+
+    return {
+      game: index + 1,
+      score: game.normalizedScore,
+      trend,
+      opponent: game.opponent,
+      result: game.win ? "W" : "L",
+      date: formatDate(game.date)
+    };
+  });
 
   return (
     <div className="max-w-6xl mx-auto px-4">
@@ -170,17 +181,20 @@ function Overview({ teamInfo, sport }: HeaderProps) {
 
       </div>
 
-      {/* Season Momentum */}
+      {/* Season Performance */}
       <div className="border rounded-lg p-6">
-        <h3 className="text-lg font-semibold mb-6 text-center">
-          Season Momentum
+        <h3 className="text-lg font-semibold text-center">
+          Season Performance
         </h3>
+        <p className="text-sm text-gray-500 mb-6 text-center">
+          Game-by-game performance based on opponent strength and margin
+        </p>
 
-        {momentumData.length > 0 ? (
+        {perfData.length > 0 ? (
           <div className="w-full min-w-0">
             <ResponsiveContainer width="100%" aspect={3}>
 
-              <BarChart data={momentumData}>
+              <BarChart data={perfData}>
                 <ReferenceLine y={0} stroke="#888" />
 
                 {/* X Axis (Game Number) */}
@@ -211,6 +225,14 @@ function Overview({ teamInfo, sport }: HeaderProps) {
                 />
 
                 <Bar dataKey="score" shape={CustomBar} />
+
+                <Line
+                  type="monotone"
+                  dataKey="trend"
+                  stroke="#ffffff"
+                  strokeWidth={2}
+                  dot={false}
+                />
 
               </BarChart>
             </ResponsiveContainer>

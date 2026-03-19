@@ -160,12 +160,16 @@ export function getSeasonStory(schedule: any[], teamId: number, spLookup: any) {
 
     const finalTags = tags.slice(0, 2); // Keep it to 2 max (change later?)
 
-    // Season Momentum Calculations
+    // Season Performance Calculations
     const performanceMargin = win ? margin : -margin;
-    const gameScore =
-      opponentRating * 0.6 +
-      performanceMargin * 0.3 +
+    let gameScore =
+      opponentRating * 0.5 +
+      performanceMargin * 0.4 +
       locationBonus * 0.1;
+
+    if (win) { // Give wins a bonus
+      gameScore += 10;
+    }
 
     games.push({
       id: game.id,
@@ -226,9 +230,9 @@ export function getSeasonStory(schedule: any[], teamId: number, spLookup: any) {
     .sort((a, b) => b.score - a.score)
     .slice(0, 3)
 
-  // Momentum Normalization
+  // Performance Normalization
   const maxScore = Math.max(...games.map(g => Math.abs(g.gameScore)), 1);
-  const momentum = games.map(g => ({
+  const performance = games.map(g => ({
     ...g,
     normalizedScore: (g.gameScore / maxScore) * 100
   }));
@@ -236,7 +240,7 @@ export function getSeasonStory(schedule: any[], teamId: number, spLookup: any) {
   return {
     bestWins,
     toughestLosses,
-    momentum
+    performance
   }
 }
 
