@@ -118,7 +118,7 @@ function Overview({ teamInfo, sport }: HeaderProps) {
       <h2 className="text-2xl md:text-3xl font-semibold text-center mb-8">
         Season Story
       </h2>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10 text-center">
 
         {/* Best Wins */}
         <div className="border rounded-lg p-6">
@@ -132,7 +132,7 @@ function Overview({ teamInfo, sport }: HeaderProps) {
                     {game.homeAway === "home" && "vs "}
                     {game.opponent}
                   </p>
-                  <p className="font-medium">{game.teamScore} – {game.opponentScore}</p>
+                  <p className="font-semibold text-xl">{game.teamScore} – {game.opponentScore}</p>
                   <p className="text-sm text-gray-500">
                     {formatDate(game.date)}
                     {game.tags?.length > 0 && " • "}
@@ -160,7 +160,7 @@ function Overview({ teamInfo, sport }: HeaderProps) {
                     {game.homeAway === "home" && "vs "}
                     {game.opponent}
                   </p>
-                  <p className="font-medium">{game.teamScore} – {game.opponentScore}</p>
+                  <p className="font-semibold text-xl">{game.teamScore} – {game.opponentScore}</p>
                   <p className="text-sm text-gray-500">
                     {formatDate(game.date)}
                     {game.tags?.length > 0 && " • "}
