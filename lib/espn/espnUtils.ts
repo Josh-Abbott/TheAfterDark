@@ -37,3 +37,10 @@ export function parseGame(event: any, teamId: number) {
     oppTeam: opponent,
   };
 }
+
+export function getRemainingGames(events: any[]) {
+  events.filter((game) => game.competitions[0].status.type.name === "STATUS_SCHEDULED") || null;
+  if (!events) return 0;
+
+  return events.length;
+}

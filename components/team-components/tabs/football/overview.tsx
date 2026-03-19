@@ -1,7 +1,3 @@
-// Program Snapshot (HC, Stadium, Location, Established year, all-time record (?))
-// Season story (best win, worst loss, avg. margin of victory, avg. margin of loss, home record, road record), 
-// Program Profile (rivalries, bowl appearances, 5-season trend (bar chart?), 1st round draft picks, etc.)
-
 import { formatDate } from "@/lib/date/dateUtils"
 import { Bar, BarChart, Line, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 
