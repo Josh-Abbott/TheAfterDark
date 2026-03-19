@@ -1,8 +1,8 @@
-import { getCurrentCoachInfo, calculateAllTimeRecord, getSeasonStory } from "@/lib/cfbd/cfbdUtils";
+import { getCurrentCoachInfo, calculateAllTimeRecord, getSeasonStory, getBowlData, getRecentSeasons } from "@/lib/cfbd/cfbdUtils";
 import { getLastGame, getNextGame, parseGame, normalizeRank } from "@/lib/espn/espnUtils";
 import { calculateStreak } from "@/lib/sports/teamStats"
 
-export function transformFB(teamData: any, scheduleData: any, coachesData: any, recordData: any, matchupData: any, spRatingData: any, metadata: any) {
+export function transformFB(teamData: any, scheduleData: any, coachesData: any, recordData: any, matchupData: any, spRatingData: any, draftInfo: any, metadata: any) {
   const team = teamData.team;
   const events = scheduleData.events;
 
@@ -14,13 +14,16 @@ export function transformFB(teamData: any, scheduleData: any, coachesData: any, 
 
   const coachInfo = getCurrentCoachInfo(coachesData);
   const allTimeRecord = calculateAllTimeRecord(recordData);
+  const bowlInfo = getBowlData(recordData);
+
+  const recentSeasons = getRecentSeasons(recordData);
+
+  const scoredWins = getSeasonStory(events, team.id, spRatingData);
 
   if (!coachInfo) {
     throw new Error("No coach found for this team!");
   }
 
-  const scoredWins = getSeasonStory(events, team.id, spRatingData);
-  console.log(scoredWins);
 
   return {
     id: team.id,
@@ -35,6 +38,8 @@ export function transformFB(teamData: any, scheduleData: any, coachesData: any, 
     coachName: coachInfo.name,
     coachYear: coachInfo.tenure,
 
+    draftPicks: draftInfo,
+
     record: {
       overall: lastGameParsed.mainTeam.record[0].displayValue,
       conference: lastGameParsed.mainTeam.record[1].displayValue,
@@ -42,6 +47,9 @@ export function transformFB(teamData: any, scheduleData: any, coachesData: any, 
 
     atRecord: `${allTimeRecord.wins}-${allTimeRecord.losses}-${allTimeRecord.ties}`,
     winPct: (allTimeRecord.wins + (allTimeRecord.ties * 0.5)) / allTimeRecord.total,
+    bowlRecord: bowlInfo,
+
+    recentSeasons: recentSeasons,
 
     rival: metadata.rivalries.football,
     rivalRecord: `${matchupData.team1Wins}-${matchupData.team2Wins}-${matchupData.ties}`,

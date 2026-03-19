@@ -3,7 +3,6 @@
 // Program Profile (rivalries, bowl appearances, 5-season trend (bar chart?), 1st round draft picks, etc.)
 
 import { formatDate } from "@/lib/date/dateUtils"
-import { useEffect, useState } from "react";
 import { Bar, BarChart, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 
 interface HeaderProps {
@@ -42,13 +41,6 @@ function Overview({ teamInfo, sport }: HeaderProps) {
     result: game.win ? "W" : "L",
     date: formatDate(game.date)
   }));
-
-  const [isMounted, setIsMounted] = useState(false);
-
-
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
 
   return (
     <div className="max-w-6xl mx-auto px-4">
@@ -184,7 +176,7 @@ function Overview({ teamInfo, sport }: HeaderProps) {
           Season Momentum
         </h3>
 
-        {isMounted && momentumData.length > 0 ? (
+        {momentumData.length > 0 ? (
           <div className="w-full min-w-0">
             <ResponsiveContainer width="100%" aspect={3}>
 
@@ -226,6 +218,89 @@ function Overview({ teamInfo, sport }: HeaderProps) {
         ) : (
           <p className="text-sm text-gray-500 text-center">
             No games played yet
+          </p>
+        )}
+      </div>
+
+      {/* Program Profile */}
+      <h2 className="text-2xl md:text-3xl font-semibold text-center mt-12 mb-8">
+        Program Profile
+      </h2>
+
+      {/* Snapshot Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+
+        {/* Bowl Appearances */}
+        <div className="border rounded-lg p-6 text-center">
+          <h3 className="text-sm uppercase tracking-wide text-gray-500 mb-2">
+            Bowl Appearances
+          </h3>
+          <p className="text-2xl font-semibold">
+            {teamData.bowlRecord.appearances ?? 0}
+          </p>
+          <p className="text-sm text-gray-500">
+            Record: {teamData.bowlRecord.wins} - {teamData.bowlRecord.losses}
+          </p>
+          <p className="text-sm text-gray-500">
+            Last: {teamData.bowlRecord.lastYear ?? "N/A"}
+          </p>
+        </div>
+
+        {/* NFL Draft Picks */}
+        <div className="border rounded-lg p-6 text-center">
+          <h3 className="text-sm uppercase tracking-wide text-gray-500 mb-2">
+            NFL Draft Picks
+          </h3>
+          <p className="text-2xl font-semibold">
+            {teamData.draftPicks.length ?? 0}
+          </p>
+          <p className="text-sm text-gray-500">
+            First Round: {teamData.draftPicks.filter((picks: { round: number; }) => picks.round === 1).length ?? 0}
+          </p>
+          <p className="text-sm text-gray-500">
+            Since 1967
+          </p>
+        </div>
+
+      </div>
+
+      {/* Recent Seasons */}
+      <div className="border rounded-lg p-6 text-center">
+        <h3 className="text-lg font-semibold mb-6">
+          Recent Seasons
+        </h3>
+
+        {teamData.recentSeasons?.length > 0 ? (
+          <div className="space-y-2">
+
+            {teamData.recentSeasons.map((season: any) => {
+              const winPct =
+                season.wins + season.losses > 0
+                  ? season.wins / (season.wins + season.losses)
+                  : 0;
+
+              let color = "text-gray-500";
+
+              if (winPct >= 0.65) color = "text-green-500";
+              else if (winPct <= 0.45) color = "text-red-500";
+
+              return (
+                <div
+                  key={season.year}
+                  className="flex justify-between max-w-xs mx-auto text-sm md:text-base"
+                >
+                  <span className="font-medium">{season.year}</span>
+                  <span className={color}>
+                    {season.wins}–{season.losses}
+                  </span>
+                </div>
+              );
+            })}
+
+          </div>
+        ) : (
+          <p className="text-sm text-gray-500">
+            No recent season data available
           </p>
         )}
       </div>
