@@ -45,9 +45,11 @@ export function calculateAllTimeRecord(recordsData: any[]) {
   };
 }
 
+// Iterate through the schcedule of a team and calculate/determine their season story for overview (FOOTBALL ONLY FOR NOW)
 export function getSeasonStory(schedule: any[], teamId: number, spLookup: any) {
   const wins: any[] = [];
   const losses: any[] = [];
+  const games: any[] = [];
 
   schedule.forEach(game => {
     const comp = game.competitions?.[0];
@@ -158,6 +160,23 @@ export function getSeasonStory(schedule: any[], teamId: number, spLookup: any) {
 
     const finalTags = tags.slice(0, 2); // Keep it to 2 max (change later?)
 
+    // Season Momentum Calculations
+    const performanceMargin = win ? margin : -margin;
+    const gameScore =
+      opponentRating * 0.6 +
+      performanceMargin * 0.3 +
+      locationBonus * 0.1;
+
+    games.push({
+      id: game.id,
+      date: game.date,
+      opponent: opponentName,
+      win,
+      gameScore
+    });
+
+    // Best/Worst Scoring
+
     let score;
 
     if (win) {
@@ -207,8 +226,18 @@ export function getSeasonStory(schedule: any[], teamId: number, spLookup: any) {
     .sort((a, b) => b.score - a.score)
     .slice(0, 3)
 
+  // Momentum Normalization
+  const maxScore = Math.max(...games.map(g => Math.abs(g.gameScore)), 1);
+  const momentum = games.map(g => ({
+    ...g,
+    normalizedScore: (g.gameScore / maxScore) * 100
+  }));
+
+  console.log(momentum);
+
   return {
     bestWins,
-    toughestLosses
+    toughestLosses,
+    momentum
   }
 }

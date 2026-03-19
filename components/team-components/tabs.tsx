@@ -26,8 +26,8 @@ const TeamTabs = ({ teamInfo, sport }: TabsProps) => {
   const ActiveComponent = activeTab.component;
 
   return (
-    <div className="justify-center text-center text-3xl md:text-4xl mb-8">
-      <div className="flex gap-4">
+    <div className="w-full mb-8">
+      <div className="flex justify-center gap-4 text-3xl md:text-4xl text-center">
         {/* Tab Buttons Creation */}
         {tabs.map((tab) => (
           <Link
@@ -35,8 +35,8 @@ const TeamTabs = ({ teamInfo, sport }: TabsProps) => {
             key={tab.id}
             scroll={false}
             className={`px-4 py-2 ${tab.id === activeTab.id
-                ? "border-b-2 border-white font-bold"
-                : ""
+              ? "border-b-2 border-white font-bold"
+              : ""
               }`}
           >
             {tab.label}
@@ -45,7 +45,7 @@ const TeamTabs = ({ teamInfo, sport }: TabsProps) => {
       </div>
 
       {/* Tab Content (Components) */}
-      <div className="mt-6">
+      <div className="mt-6 w-full">
         <ActiveComponent teamInfo={teamInfo} sport={sport} />
       </div>
     </div>

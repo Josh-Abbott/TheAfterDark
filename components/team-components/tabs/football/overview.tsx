@@ -3,15 +3,52 @@
 // Program Profile (rivalries, bowl appearances, 5-season trend (bar chart?), 1st round draft picks, etc.)
 
 import { formatDate } from "@/lib/date/dateUtils"
+import { useEffect, useState } from "react";
+import { Bar, BarChart, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 
 interface HeaderProps {
   teamInfo: any;
   sport: any;
 }
 
+const CustomBar = (props: any) => {
+  const { x, y, width, height, payload } = props;
+  const isPositive = payload.score >= 0;
+
+  // Make sure losses get shown as downward (apparently issue for custom bars)
+  const correctedHeight = Math.abs(height);
+  const correctedY = height < 0 ? y + height : y;
+
+  return (
+    <rect
+      x={x}
+      y={correctedY}
+      width={width}
+      height={correctedHeight}
+      rx={3}
+      fill={isPositive ? "#22c55e" : "#ef4444"}
+    />
+  );
+};
+
 function Overview({ teamInfo, sport }: HeaderProps) {
   const teamData = teamInfo.team;
   const currentDate = new Date();
+
+  const momentumData = teamData.seasonStory.momentum.map((game: any, index: number) => ({
+    game: index + 1,
+    score: game.normalizedScore,
+    opponent: game.opponent,
+    result: game.win ? "W" : "L",
+    date: formatDate(game.date)
+  }));
+
+  const [isMounted, setIsMounted] = useState(false);
+
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   return (
     <div className="max-w-6xl mx-auto px-4">
@@ -141,25 +178,57 @@ function Overview({ teamInfo, sport }: HeaderProps) {
 
       </div>
 
-      {/* Season Momentum - GRAPH? DOTS LIKE THIS? */}
-      <div className="border rounded-lg p-6 text-center">
+      {/* Season Momentum */}
+      <div className="border rounded-lg p-6">
+        <h3 className="text-lg font-semibold mb-6 text-center">
+          Season Momentum
+        </h3>
 
-        <h3 className="text-lg font-semibold mb-6">Season Momentum</h3>
+        {isMounted && momentumData.length > 0 ? (
+          <div className="w-full min-w-0">
+            <ResponsiveContainer width="100%" aspect={3}>
 
-        <div className="flex justify-center gap-3 flex-wrap">
+              <BarChart data={momentumData}>
+                <ReferenceLine y={0} stroke="#888" />
 
-          <span className="w-10 h-10 flex items-center justify-center rounded bg-green-500 text-white font-bold">W</span>
-          <span className="w-10 h-10 flex items-center justify-center rounded bg-green-500 text-white font-bold">W</span>
-          <span className="w-10 h-10 flex items-center justify-center rounded bg-red-500 text-white font-bold">L</span>
-          <span className="w-10 h-10 flex items-center justify-center rounded bg-green-500 text-white font-bold">W</span>
-          <span className="w-10 h-10 flex items-center justify-center rounded bg-green-500 text-white font-bold">W</span>
-          <span className="w-10 h-10 flex items-center justify-center rounded bg-red-500 text-white font-bold">L</span>
-          <span className="w-10 h-10 flex items-center justify-center rounded bg-green-500 text-white font-bold">W</span>
+                {/* X Axis (Game Number) */}
+                <XAxis
+                  dataKey="game"
+                  tick={{ fontSize: 12 }}
+                />
 
-        </div>
+                {/* Y Axis hidden (needed for scaling) */}
+                <YAxis hide domain={[-100, 100]} />
 
+                {/* Tooltip */}
+                <Tooltip
+                  content={({ active, payload }) => {
+                    if (!active || !payload || !payload.length) return null;
+                    const data = payload[0].payload;
+
+                    return (
+                      <div className="bg-white border rounded p-3 text-sm shadow text-black">
+                        <p className="font-semibold">
+                          {data.opponent}
+                        </p>
+                        <p>{data.result} • {data.date}</p>
+                        <p>Performance: {Math.round(data.score)}</p>
+                      </div>
+                    );
+                  }}
+                />
+
+                <Bar dataKey="score" shape={CustomBar} />
+
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        ) : (
+          <p className="text-sm text-gray-500 text-center">
+            No games played yet
+          </p>
+        )}
       </div>
-
     </div>
   );
 }
