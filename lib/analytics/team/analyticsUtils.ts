@@ -326,9 +326,7 @@ export function getTeamStats(events: any[], teamId: number, teamName: string, sp
     totalYardsAllowed += getStat(oppStats, "totalYards");
     totalPassAllowed += getStat(oppStats, "netPassingYards");
     totalRushAllowed += getStat(oppStats, "rushingYards");
-
-    console.log(totalYards, totalPassYards, totalRushYards, totalYardsAllowed, totalPassAllowed, totalRushAllowed);
-
+    
     statGames++;
   });
 

@@ -11,6 +11,7 @@ import { getMatchupInfo } from "@/lib/cfbd/matchup";
 import { getDraftInfo } from "@/lib/cfbd/draftPicks";
 import { getMetricsInfo } from "@/lib/cfbd/metrics";
 import { getTeamInfo } from "@/lib/cfbd/team";
+import { getPlayerInfo } from "@/lib/cfbd/player";
 
 import { transformBB } from "@/lib/transformers/teamBB";
 import { transformFB } from "@/lib/transformers/teamFB";
@@ -48,17 +49,18 @@ export async function getTeamData(teamName: string, sportName: string) {
 
     const rival = team.rivalries?.football;
 
-    const [coachesData, recordData, spRatingInfo, draftInfo, predictionInfo, teamCFBDInfo, matchupData,] = await Promise.all([
+    const [coachesData, recordData, spRatingInfo, draftInfo, predictionInfo, teamCFBDInfo, playerInfo, matchupData,] = await Promise.all([
       getCoachesInfo(teamName),
       getRecordInfo(teamName),
       getRatingInfo("SP+"),
       getDraftInfo(teamName),
       getMetricsInfo("wp/pregame", teamName),
       getTeamInfo(teamName),
+      getPlayerInfo(teamName),
       rival ? getMatchupInfo(teamName, rival) : Promise.resolve(null)
     ]);
 
-    transformedTeam = transformFB(teamData, scheduleData, coachesData, recordData, matchupData, spRatingInfo, draftInfo, predictionInfo, teamCFBDInfo, team);
+    transformedTeam = transformFB(teamData, scheduleData, coachesData, recordData, matchupData, spRatingInfo, draftInfo, predictionInfo, teamCFBDInfo, playerInfo, team);
   } else if (sport.path === "baseball/college-baseball") {
     transformedTeam = transformBaseB(teamData, scheduleData);
   } else {

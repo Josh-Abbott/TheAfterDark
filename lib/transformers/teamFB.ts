@@ -1,9 +1,9 @@
-import { getCurrentCoachInfo, calculateAllTimeRecord, getBowlData, getRecentSeasons } from "@/lib/cfbd/cfbdUtils";
+import { getCurrentCoachInfo, calculateAllTimeRecord, getBowlData, getRecentSeasons, getPlayerLeaders } from "@/lib/cfbd/cfbdUtils";
 import { getSeasonStory, getScheduleSummary, getTeamStats } from "@/lib/analytics/team/analyticsUtils";
 import { getLastGame, getNextGame, parseGame, normalizeRank } from "@/lib/espn/espnUtils";
 import { calculateStreak } from "@/lib/sports/teamStats"
 
-export function transformFB(teamData: any, scheduleData: any, coachesData: any, recordData: any, matchupData: any, spRatingData: any, draftInfo: any, predictionsInfo: any, teamCFBDInfo: any, metadata: any) {
+export function transformFB(teamData: any, scheduleData: any, coachesData: any, recordData: any, matchupData: any, spRatingData: any, draftInfo: any, predictionsInfo: any, teamCFBDInfo: any, playerInfo: any, metadata: any) {
   const team = teamData.team;
   const events = scheduleData.events;
 
@@ -27,6 +27,9 @@ export function transformFB(teamData: any, scheduleData: any, coachesData: any, 
   const seasonStory = getSeasonStory(events, team.id, spLookup);
 
   const teamStats = getTeamStats(events, team.id, team.location, spRatingData, teamCFBDInfo);
+
+  const playerLeaders = getPlayerLeaders(playerInfo);
+  console.log(playerLeaders);
 
   if (!coachInfo) {
     throw new Error("No coach found for this team!");
@@ -98,6 +101,8 @@ export function transformFB(teamData: any, scheduleData: any, coachesData: any, 
     bowlRecord: bowlInfo,
 
     recentSeasons,
+
+    playerLeaders,
 
     rival: metadata.rivalries.football,
     rivalRecord: `${matchupData.team1Wins}-${matchupData.team2Wins}-${matchupData.ties}`,

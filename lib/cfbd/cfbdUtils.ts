@@ -95,3 +95,66 @@ export function getRecentSeasons(records: any[], numberOfSeasons = 5) {
     postseasonLosses: season.postseason?.losses ?? 0
   }));
 }
+
+// Organize the player data by combining them with their respective stats
+function groupPlayerStats(data: any[]) {
+  const players: Record<string, any> = {};
+
+  data.forEach(row => {
+    const id = row.playerId;
+
+    if (!players[id]) {
+      players[id] = {
+        name: row.player,
+        position: row.position,
+        stats: {}
+      };
+    }
+
+    players[id].stats[row.statType] = Number(row.stat);
+  });
+
+  return Object.values(players);
+}
+
+// Use the CFBD /stats/player/season data to calculate and determine the player leaders
+export function getPlayerLeaders(data: any[]) {
+  const filterCategory = (cat: string) =>
+    data.filter(d => d.category === cat);
+
+  const getLeader = (rows: any[], statKey: string) => {
+    const players = groupPlayerStats(rows);
+
+    return players.reduce((best, player) => {
+      const val = player.stats[statKey] || 0;
+      return val > (best?.stats[statKey] || 0) ? player : best;
+    }, null);
+  };
+
+  const passing = getLeader(filterCategory("passing"), "YDS");
+  const rushing = getLeader(filterCategory("rushing"), "YDS");
+  const receiving = getLeader(filterCategory("receiving"), "YDS");
+
+  return {
+    passing: passing && {
+      name: passing.name,
+      yards: passing.stats.YDS,
+      tds: passing.stats.TD,
+      compPct: passing.stats.PCT
+    },
+    rushing: rushing && {
+      name: rushing.name,
+      yards: rushing.stats.YDS,
+      tds: rushing.stats.TD,
+      ypc: rushing.stats.CAR
+        ? (rushing.stats.YDS / rushing.stats.CAR).toFixed(1)
+        : 0
+    },
+    receiving: receiving && {
+      name: receiving.name,
+      yards: receiving.stats.YDS,
+      tds: receiving.stats.TD,
+      rec: receiving.stats.REC
+    }
+  };
+}
