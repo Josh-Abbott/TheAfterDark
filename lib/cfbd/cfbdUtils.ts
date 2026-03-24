@@ -96,7 +96,7 @@ export function getRecentSeasons(records: any[], numberOfSeasons = 5) {
   }));
 }
 
-// Organize the player data by combining them with their respective stats
+// A helper function to organize the player data by combining them with their respective stats
 function groupPlayerStats(data: any[]) {
   const players: Record<string, any> = {};
 
@@ -117,44 +117,104 @@ function groupPlayerStats(data: any[]) {
   return Object.values(players);
 }
 
+// A helper function to reduce the player lists in order to find the leader
+const getLeader = (rows: any[], statKey: string, validPositions?: string[]) => {
+  let players = groupPlayerStats(rows);
+
+  if (validPositions) {
+    players = players.filter(p => validPositions.includes(p.position));
+  }
+
+  if (players.length === 0) return null;
+
+  return players.reduce((best, player) => {
+    const val = player.stats[statKey] || 0;
+    return val > (best.stats[statKey] || 0) ? player : best;
+  }, players[0]);
+};
+
 // Use the CFBD /stats/player/season data to calculate and determine the player leaders
 export function getPlayerLeaders(data: any[]) {
   const filterCategory = (cat: string) =>
     data.filter(d => d.category === cat);
 
-  const getLeader = (rows: any[], statKey: string) => {
-    const players = groupPlayerStats(rows);
+  const passing = getLeader(
+    filterCategory("passing"),
+    "YDS",
+    ["QB"] // only quarterbacks
+  );
 
-    return players.reduce((best, player) => {
-      const val = player.stats[statKey] || 0;
-      return val > (best?.stats[statKey] || 0) ? player : best;
-    }, null);
-  };
+  const rushing = getLeader(
+    filterCategory("rushing"),
+    "YDS",
+    ["RB", "QB"] // allow mobile QBs
+  );
 
-  const passing = getLeader(filterCategory("passing"), "YDS");
-  const rushing = getLeader(filterCategory("rushing"), "YDS");
-  const receiving = getLeader(filterCategory("receiving"), "YDS");
+  const receiving = getLeader(
+    filterCategory("receiving"),
+    "YDS",
+    ["WR", "TE", "RB"] // realistic receivers
+  );
+
+  const defensiveRows = filterCategory("defensive");
+  const interceptionRows = filterCategory("interceptions");
+
+  const tacklesLeader = getLeader(
+    defensiveRows,
+    "TOT"
+  );
+
+  const sacksLeader = getLeader(
+    defensiveRows,
+    "SACKS"
+  );
+
+  const interceptionsLeader = getLeader(
+    interceptionRows,
+    "INT"
+  );
 
   return {
     passing: passing && {
       name: passing.name,
-      yards: passing.stats.YDS,
-      tds: passing.stats.TD,
-      compPct: passing.stats.PCT
+      yards: passing.stats.YDS ?? 0,
+      tds: passing.stats.TD ?? 0,
+      compPct: passing.stats.PCT ?? 0
     },
+
     rushing: rushing && {
       name: rushing.name,
-      yards: rushing.stats.YDS,
-      tds: rushing.stats.TD,
+      yards: rushing.stats.YDS ?? 0,
+      tds: rushing.stats.TD ?? 0,
       ypc: rushing.stats.CAR
         ? (rushing.stats.YDS / rushing.stats.CAR).toFixed(1)
         : 0
     },
+
     receiving: receiving && {
       name: receiving.name,
-      yards: receiving.stats.YDS,
-      tds: receiving.stats.TD,
-      rec: receiving.stats.REC
+      yards: receiving.stats.YDS ?? 0,
+      tds: receiving.stats.TD ?? 0,
+      rec: receiving.stats.REC ?? 0
+    },
+
+    defense: {
+      tackles: tacklesLeader && {
+        name: tacklesLeader.name,
+        value: tacklesLeader.stats.TOT ?? 0,
+        solo: tacklesLeader.stats.SOLO ?? null
+      },
+      sacks: sacksLeader && {
+        name: sacksLeader.name,
+        value: sacksLeader.stats.SACKS ?? 0,
+        tfl: sacksLeader.stats.TFL ?? null
+      },
+      interceptions: interceptionsLeader && {
+        name: interceptionsLeader.name,
+        value: interceptionsLeader.stats.INT ?? 0,
+        yards: interceptionsLeader.stats.YDS ?? null,
+        tds: interceptionsLeader.stats.TD ?? null
+      }
     }
   };
 }
