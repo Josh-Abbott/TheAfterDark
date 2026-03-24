@@ -3,31 +3,66 @@ import { getSeasonStory, getScheduleSummary, getTeamStats } from "@/lib/analytic
 import { getLastGame, getNextGame, parseGame, normalizeRank } from "@/lib/espn/espnUtils";
 import { calculateStreak } from "@/lib/sports/teamStats";
 
+// Type Definitions
+interface TeamData {
+  team: {
+    id: number;
+    displayName: string;
+    location: string;
+    logos: { href: string }[];
+    color: string;
+    standingSummary: any;
+  };
+}
+
+interface ScheduleData {
+  events: any[];
+}
+
+interface Metadata {
+  name: string;
+  city: string;
+  state: string;
+  stadium?: {
+    name?: string;
+    capacity?: number;
+  };
+  rivalries?: {
+    football?: string;
+    basketball?: string;
+  };
+}
+
+interface SPTeamRating {
+  team: string;
+  rating: number;
+}
+
 // Create the spLookup to grab SP+ info for teams
-function buildSpLookup(spRatingData: any[]) {
+function buildSpLookup(spRatingData: SPTeamRating[]): Record<string, number> {
   const spLookup: Record<string, number> = {};
-  spRatingData.forEach((team) => {
+  spRatingData?.forEach((team) => {
     spLookup[team.team] = team.rating;
   });
   return spLookup;
 }
 
 // Normalize schedule for frontend, keep key info and store SP+ rating
-function normalizeSchedule(events: any[], teamId: number, spLookup: Record<string, number>, predictionsInfo: any, seasonStory: any) {
+function normalizeSchedule(events: any[], teamId: number, spLookup: Record<string, number>, predictionsInfo: any[], seasonStory: any) {
   return events
     .map((game) => {
       const comp = game.competitions?.[0];
       if (!comp) return null;
 
-      const competitors = comp.competitors;
-      const teamComp = competitors.find((c: any) => c.team.id === teamId);
-      const oppComp = competitors.find((c: any) => c.team.id !== teamId);
+      const competitors = comp?.competitors;
+      const teamComp = competitors?.find((c: any) => c.team.id === teamId);
+      const oppComp = competitors?.find((c: any) => c.team.id !== teamId);
       if (!teamComp || !oppComp) return null;
 
-      const opponentName = oppComp.team.location;
+      const opponentName = oppComp?.team?.location;
       const opponentRating = spLookup[opponentName] ?? 0;
-      const homeAway = teamComp.homeAway;
-      const neutral = comp.neutralSite;
+      const homeAway = teamComp?.homeAway;
+      const neutral = comp?.neutralSite;
       const teamScore = Number(teamComp.score?.value ?? 0);
       const opponentScore = Number(oppComp.score?.value ?? 0);
       const completed = comp.status?.type?.completed ?? false;
@@ -60,12 +95,12 @@ function formatGameForFrontend(gameParsed: any, gameRaw: any) {
   if (!gameParsed) return null;
 
   return {
-    oppTeam: gameParsed.oppTeam.team.abbreviation,
-    oppWin: gameParsed.oppTeam.winner,
-    oppScore: gameParsed.oppTeam.score.displayValue,
-    mainScore: gameParsed.mainTeam.score.displayValue,
-    homeAway: gameParsed.mainTeam.homeAway,
-    date: new Date(gameRaw.date).toLocaleDateString(undefined, { month: "short", day: "numeric" }),
+    oppTeam: gameParsed?.oppTeam?.team?.abbreviation,
+    oppWin: gameParsed?.oppTeam?.winner,
+    oppScore: gameParsed?.oppTeam?.score?.displayValue,
+    mainScore: gameParsed?.mainTeam?.score?.displayValue,
+    homeAway: gameParsed?.mainTeam?.homeAway,
+    date: new Date(gameRaw?.date).toLocaleDateString(undefined, { month: "short", day: "numeric" }),
   };
 }
 
@@ -73,26 +108,25 @@ function formatNextGameForFrontend(nextGameParsed: any, nextGameRaw: any) {
   if (!nextGameParsed) return null;
 
   return {
-    oppTeam: nextGameParsed.oppTeam.team.abbreviation,
-    homeAway: nextGameParsed.mainTeam.homeAway,
-    date: new Date(nextGameRaw.date).toLocaleDateString(undefined, { month: "short", day: "numeric" }),
-    time: new Date(nextGameRaw.date).toLocaleTimeString(undefined, { hour: "numeric", minute: "2-digit" }),
+    oppTeam: nextGameParsed?.oppTeam?.team?.abbreviation,
+    homeAway: nextGameParsed?.mainTeam?.homeAway,
+    date: new Date(nextGameRaw?.date).toLocaleDateString(undefined, { month: "short", day: "numeric" }),
+    time: new Date(nextGameRaw?.date).toLocaleTimeString(undefined, { hour: "numeric", minute: "2-digit" }),
   };
 }
 
 function computeRivalStats(matchupData: any) {
-  const totalGames = matchupData.team1Wins + matchupData.team2Wins + matchupData.ties;
+  const totalGames = matchupData?.team1Wins + matchupData?.team2Wins + matchupData?.ties;
   return {
-    rivalRecord: `${matchupData.team1Wins}-${matchupData.team2Wins}-${matchupData.ties}`,
-    rivalWinPct: totalGames > 0 ? (matchupData.team1Wins + (matchupData.ties * 0.5)) / totalGames : 0,
+    rivalRecord: `${matchupData?.team1Wins}-${matchupData?.team2Wins}-${matchupData?.ties}`,
+    rivalWinPct: totalGames > 0 ? (matchupData?.team1Wins + (matchupData?.ties * 0.5)) / totalGames : 0,
   };
 }
 
-// -------------------- Main Transformer -------------------- //
-
-export function transformFB(teamData: any, scheduleData: any, coachesData: any, recordData: any, matchupData: any, spRatingData: any, draftInfo: any, predictionsInfo: any, teamCFBDInfo: any, playerInfo: any, metadata: any) {
-  const team = teamData.team;
-  const events = scheduleData.events;
+// Main Transformer
+export function transformFB(teamData: TeamData, scheduleData: ScheduleData, coachesData: any[], recordData: any, matchupData: any, spRatingData: SPTeamRating[], draftInfo: any[], predictionsInfo: any[], teamCFBDInfo: any, playerInfo: any[], metadata: Metadata) {
+  const team = teamData?.team ?? {};
+  const events = scheduleData?.events;
 
   // Last and next games
   const lastGame = getLastGame(events);
@@ -129,37 +163,37 @@ export function transformFB(teamData: any, scheduleData: any, coachesData: any, 
   return {
     id: team.id,
     name: team.displayName,
-    school: metadata.name,
-    city: metadata.city,
-    state: metadata.state,
-    stadium: metadata.stadium,
+    school: metadata?.name,
+    city: metadata?.city,
+    state: metadata?.state,
+    stadium: metadata?.stadium,
     logo: team.logos[0]?.href,
     color: team.color,
 
-    coachName: coachInfo.name,
-    coachYear: coachInfo.tenure,
+    coachName: coachInfo?.name,
+    coachYear: coachInfo?.tenure,
 
     draftPicks: draftInfo,
 
     record: {
-      overall: lastGameParsed.mainTeam.record[0].displayValue,
-      conference: lastGameParsed.mainTeam.record[1].displayValue,
+      overall: lastGameParsed?.mainTeam?.record[0]?.displayValue,
+      conference: lastGameParsed?.mainTeam?.record[1]?.displayValue,
     },
 
-    atRecord: `${allTimeRecord.wins}-${allTimeRecord.losses}-${allTimeRecord.ties}`,
-    winPct: (allTimeRecord.wins + allTimeRecord.ties * 0.5) / allTimeRecord.total,
+    atRecord: `${allTimeRecord?.wins}-${allTimeRecord?.losses}-${allTimeRecord?.ties}`,
+    winPct: (allTimeRecord?.wins + allTimeRecord?.ties * 0.5) / allTimeRecord?.total,
     bowlRecord: bowlInfo,
 
     recentSeasons,
     playerLeaders,
 
-    rival: metadata.rivalries.football,
+    rival: metadata?.rivalries?.football,
     rivalRecord,
     rivalWinPct,
 
     streak: calculateStreak(events, team.id),
     standing: team.standingSummary,
-    rank: normalizeRank(lastGameParsed.mainTeam.curatedRank?.current),
+    rank: normalizeRank(lastGameParsed?.mainTeam?.curatedRank?.current),
 
     seasonStory,
     teamStats,
