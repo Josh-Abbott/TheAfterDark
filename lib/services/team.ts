@@ -3,12 +3,14 @@ import { PAC_TEAMS } from "@/lib/config/pac12Teams";
 
 import { getSchedule } from "@/lib/espn/schedule";
 import { getTeam } from "@/lib/espn/team";
+
 import { getCoachesInfo } from "@/lib/cfbd/coaches";
 import { getRecordInfo } from "@/lib/cfbd/records";
 import { getRatingInfo } from "@/lib/cfbd/rating";
 import { getMatchupInfo } from "@/lib/cfbd/matchup";
 import { getDraftInfo } from "@/lib/cfbd/draftPicks";
 import { getMetricsInfo } from "@/lib/cfbd/metrics";
+import { getTeamInfo } from "@/lib/cfbd/team";
 
 import { transformBB } from "@/lib/transformers/teamBB";
 import { transformFB } from "@/lib/transformers/teamFB";
@@ -46,22 +48,17 @@ export async function getTeamData(teamName: string, sportName: string) {
 
     const rival = team.rivalries?.football;
 
-    const [coachesData, recordData, spRatingInfo, draftInfo, predictionInfo, matchupData] = await Promise.all([
+    const [coachesData, recordData, spRatingInfo, draftInfo, predictionInfo, teamCFBDInfo, matchupData,] = await Promise.all([
       getCoachesInfo(teamName),
       getRecordInfo(teamName),
       getRatingInfo("SP+"),
       getDraftInfo(teamName),
       getMetricsInfo("wp/pregame", teamName),
+      getTeamInfo(teamName),
       rival ? getMatchupInfo(teamName, rival) : Promise.resolve(null)
     ]);
 
-    const spLookup: Record<string, number> = {}
-
-    spRatingInfo.forEach((team: { team: string | number; rating: any; }) => {
-      spLookup[team.team] = team.rating
-    })
-
-    transformedTeam = transformFB(teamData, scheduleData, coachesData, recordData, matchupData, spLookup, draftInfo, predictionInfo, team);
+    transformedTeam = transformFB(teamData, scheduleData, coachesData, recordData, matchupData, spRatingInfo, draftInfo, predictionInfo, teamCFBDInfo, team);
   } else if (sport.path === "baseball/college-baseball") {
     transformedTeam = transformBaseB(teamData, scheduleData);
   } else {

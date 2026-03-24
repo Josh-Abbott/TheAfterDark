@@ -1,12 +1,12 @@
 import { getCurrentCoachInfo, calculateAllTimeRecord, getBowlData, getRecentSeasons } from "@/lib/cfbd/cfbdUtils";
-import { getSeasonStory, getScheduleSummary } from "@/lib/analytics/team/analyticsUtils";
+import { getSeasonStory, getScheduleSummary, getTeamStats } from "@/lib/analytics/team/analyticsUtils";
 import { getLastGame, getNextGame, parseGame, normalizeRank } from "@/lib/espn/espnUtils";
 import { calculateStreak } from "@/lib/sports/teamStats"
 
-export function transformFB(teamData: any, scheduleData: any, coachesData: any, recordData: any, matchupData: any, spRatingData: any, draftInfo: any, predictionsInfo: any, metadata: any) {
+export function transformFB(teamData: any, scheduleData: any, coachesData: any, recordData: any, matchupData: any, spRatingData: any, draftInfo: any, predictionsInfo: any, teamCFBDInfo: any, metadata: any) {
   const team = teamData.team;
   const events = scheduleData.events;
-  
+
   const lastGame = getLastGame(events);
   const nextGame = getNextGame(events);
 
@@ -18,8 +18,15 @@ export function transformFB(teamData: any, scheduleData: any, coachesData: any, 
   const bowlInfo = getBowlData(recordData);
   const recentSeasons = getRecentSeasons(recordData);
 
-  const scheduleSummary = getScheduleSummary(events, team.id, spRatingData, predictionsInfo);
-  const seasonStory = getSeasonStory(events, team.id, spRatingData);
+  const spLookup: Record<string, number> = {}
+  spRatingData.forEach((team: { team: string | number; rating: any; }) => {
+    spLookup[team.team] = team.rating
+  })
+
+  const scheduleSummary = getScheduleSummary(events, team.id, spLookup, predictionsInfo);
+  const seasonStory = getSeasonStory(events, team.id, spLookup);
+
+  const teamStats = getTeamStats(events, team.id, team.location, spRatingData, teamCFBDInfo);
 
   if (!coachInfo) {
     throw new Error("No coach found for this team!");
@@ -36,7 +43,7 @@ export function transformFB(teamData: any, scheduleData: any, coachesData: any, 
     if (!teamComp || !oppComp) return null;
 
     const opponentName = oppComp.team.location;
-    const opponentRating = spRatingData[opponentName] ?? 0;
+    const opponentRating = spLookup[opponentName] ?? 0;
 
     const homeAway = teamComp.homeAway;
     const neutral = comp.neutralSite;
@@ -101,6 +108,7 @@ export function transformFB(teamData: any, scheduleData: any, coachesData: any, 
     rank: normalizeRank(lastGameParsed.mainTeam.curatedRank?.current),
 
     seasonStory,
+    teamStats,
 
     scheduleSummary,
     spRatingData,

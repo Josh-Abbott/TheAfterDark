@@ -1,4 +1,4 @@
-// Iterate through the schcedule of a team and calculate/determine their season story for overview (FOOTBALL ONLY FOR NOW)
+// Iterate through the schedule of a team and calculate/determine their season story for overview (FOOTBALL ONLY FOR NOW)
 export function getSeasonStory(schedule: any[], teamId: number, spLookup: any) {
   const wins: any[] = [];
   const losses: any[] = [];
@@ -193,8 +193,6 @@ export function getSeasonStory(schedule: any[], teamId: number, spLookup: any) {
     normalizedScore: (g.gameScore / maxScore) * 100
   }));
 
-  console.log(games);
-
   return {
     bestWins,
     toughestLosses,
@@ -257,5 +255,112 @@ export function getScheduleSummary(schedule: any[], teamId: number, spLookup: an
     remainingGames,
     avgOpponentRating: Number(avgOpponentRating.toFixed(1)),
     projectedRecord: `${Math.round(projectedWins)}–${Math.round(projectedLosses)}`
+  };
+}
+
+// Get various stats relating specifically to the team using both CFBD and ESPN data
+export function getTeamStats(events: any[], teamId: number, teamName: string, spRatingData: any[], teamCFBDInfo: any[]) {
+  let gamesPlayed = 0;
+  let totalPointsFor = 0;
+  let totalPointsAgainst = 0;
+
+  events.forEach(game => {
+    const comp = game.competitions?.[0];
+    if (!comp) return;
+
+    const competitors = comp.competitors;
+
+    const team = competitors.find((c: any) => c.team.id === teamId);
+    const opponent = competitors.find((c: any) => c.team.id !== teamId);
+
+    if (!team || !opponent) return;
+
+    const teamScore = Number(team.score?.value ?? 0);
+    const opponentScore = Number(opponent.score?.value ?? 0);
+
+    totalPointsFor += teamScore;
+    totalPointsAgainst += opponentScore;
+
+    gamesPlayed++;
+  });
+
+  const safeAvg = (total: number, games: number) =>
+    games > 0 ? Number((total / games).toFixed(1)) : 0;
+
+  const ppg = safeAvg(totalPointsFor, gamesPlayed);
+  const papg = safeAvg(totalPointsAgainst, gamesPlayed);
+  const diff = Number((ppg - papg).toFixed(1));
+
+  let statGames = 0;
+
+  let totalYards = 0;
+  let totalPassYards = 0;
+  let totalRushYards = 0;
+
+  let totalYardsAllowed = 0;
+  let totalPassAllowed = 0;
+  let totalRushAllowed = 0;
+
+  const getStat = (statsArr: any[], category: string) => {
+    const stat = statsArr.find((s: any) => s.category === category);
+    return Number(stat?.stat ?? 0);
+  };
+
+  teamCFBDInfo.forEach(game => {
+    const team = game.teams.find(
+      (t: any) => Number(t.teamId) === Number(teamId)
+    );
+    const opponent = game.teams.find(
+      (t: any) => Number(t.teamId) !== Number(teamId)
+    );
+
+    if (!team || !opponent) return;
+
+    const teamStats = team.stats || [];
+    const oppStats = opponent.stats || [];
+
+    totalYards += getStat(teamStats, "totalYards");
+    totalPassYards += getStat(teamStats, "netPassingYards");
+    totalRushYards += getStat(teamStats, "rushingYards");
+
+    totalYardsAllowed += getStat(oppStats, "totalYards");
+    totalPassAllowed += getStat(oppStats, "netPassingYards");
+    totalRushAllowed += getStat(oppStats, "rushingYards");
+
+    console.log(totalYards, totalPassYards, totalRushYards, totalYardsAllowed, totalPassAllowed, totalRushAllowed);
+
+    statGames++;
+  });
+
+  const yardsPerGame = safeAvg(totalYards, statGames);
+  const passYards = safeAvg(totalPassYards, statGames);
+  const rushYards = safeAvg(totalRushYards, statGames);
+
+  const yardsAllowed = safeAvg(totalYardsAllowed, statGames);
+  const passAllowed = safeAvg(totalPassAllowed, statGames);
+  const rushAllowed = safeAvg(totalRushAllowed, statGames);
+
+  const teamSP = spRatingData.find((t: any) => t.team === teamName);
+
+  const spOverall = teamSP?.rating ?? null;
+  const spOffense = teamSP?.offense?.rating ?? null;
+  const spDefense = teamSP?.defense?.rating ?? null;
+
+  return {
+    ppg,
+    papg,
+    diff,
+
+    spOverall,
+    spOffense,
+    spDefense,
+
+    yardsPerGame,
+    passYards,
+    rushYards,
+
+    yardsAllowed,
+    passAllowed,
+    rushAllowed
   };
 }

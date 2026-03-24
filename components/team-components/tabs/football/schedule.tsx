@@ -1,15 +1,10 @@
-// Schedule Overview (SoS, games remaining, projections?)
-// Schedule List (include opponent metrics + make sure to include channels)
-// ?
-
 import { ScheduleCard } from "@/components/team-components/scheduleCard"
 
 interface ScheduleProps {
   teamInfo: any;
-  sport: string;
 }
 
-function Schedule({ teamInfo, sport }: ScheduleProps) {
+function Schedule({ teamInfo }: ScheduleProps) {
   const teamData = teamInfo.team;
   const scheduleSummary = teamData.scheduleSummary || {};
   const remainingGames = scheduleSummary.remainingGames ?? 0;

@@ -1,9 +1,8 @@
 interface PlayersProps {
   teamInfo: any;
-  sport: string;
 }
 
-function Players({ teamInfo, sport }: PlayersProps) {
+function Players({ teamInfo }: PlayersProps) {
   return (
     <div>
       Test2
