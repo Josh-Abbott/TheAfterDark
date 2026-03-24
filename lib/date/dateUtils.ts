@@ -7,7 +7,7 @@ export function formatDateForESPN(date = new Date()) {
   return `${year}${month}${day}`;
 }
 
-export function formatDate(dateString: string) {
+export function formatDateMD(dateString: string) {
   if (!dateString) return ""
 
   const date = new Date(dateString)
@@ -16,4 +16,17 @@ export function formatDate(dateString: string) {
     month: "short",
     day: "numeric"
   })
+}
+
+export function formatDateMDHM(dateString: string) {
+  if (!dateString) return ""
+
+  const date = new Date(dateString)
+
+  return date.toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+  });
 }

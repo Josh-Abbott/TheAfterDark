@@ -129,8 +129,11 @@ export function getSeasonStory(schedule: any[], teamId: number, spLookup: any) {
       date: game.date,
       opponent: opponentName,
       win,
-      gameScore
+      gameScore,
+      tags: finalTags
     });
+
+
 
     // Best/Worst Scoring
 
@@ -190,10 +193,13 @@ export function getSeasonStory(schedule: any[], teamId: number, spLookup: any) {
     normalizedScore: (g.gameScore / maxScore) * 100
   }));
 
+  console.log(games);
+
   return {
     bestWins,
     toughestLosses,
-    performance
+    performance,
+    games
   }
 }
 

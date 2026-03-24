@@ -2,6 +2,8 @@
 // Schedule List (include opponent metrics + make sure to include channels)
 // ?
 
+import { ScheduleCard } from "@/components/team-components/scheduleCard"
+
 interface ScheduleProps {
   teamInfo: any;
   sport: string;
@@ -12,6 +14,7 @@ function Schedule({ teamInfo, sport }: ScheduleProps) {
   const scheduleSummary = teamData.scheduleSummary || {};
   const remainingGames = scheduleSummary.remainingGames ?? 0;
   const avgOpponentRating = scheduleSummary.avgOpponentRating ?? 0;
+  const schedule = teamData.schedule || [];
 
   // Determine if it's offseason (no remaining games)
   const isOffseason = remainingGames === 0;
@@ -69,9 +72,22 @@ function Schedule({ teamInfo, sport }: ScheduleProps) {
               : "Based on projections"}
           </p>
         </div>
-
       </div>
 
+      {/* Game List */}
+      <h2 className="text-2xl md:text-3xl font-semibold text-center mb-8">
+        Full Schedule
+      </h2>
+
+      <div>
+        {schedule.length > 0 ? (
+          schedule.map((game: any) => (
+            <ScheduleCard key={game.id} game={game} />
+          ))
+        ) : (
+          <p className="text-gray-500 text-center">No games scheduled yet</p>
+        )}
+      </div>
     </div>
   );
 }

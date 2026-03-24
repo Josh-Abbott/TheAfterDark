@@ -6,7 +6,7 @@ import { calculateStreak } from "@/lib/sports/teamStats"
 export function transformFB(teamData: any, scheduleData: any, coachesData: any, recordData: any, matchupData: any, spRatingData: any, draftInfo: any, predictionsInfo: any, metadata: any) {
   const team = teamData.team;
   const events = scheduleData.events;
-
+  
   const lastGame = getLastGame(events);
   const nextGame = getNextGame(events);
 
@@ -16,16 +16,55 @@ export function transformFB(teamData: any, scheduleData: any, coachesData: any, 
   const coachInfo = getCurrentCoachInfo(coachesData);
   const allTimeRecord = calculateAllTimeRecord(recordData);
   const bowlInfo = getBowlData(recordData);
-
   const recentSeasons = getRecentSeasons(recordData);
 
   const scheduleSummary = getScheduleSummary(events, team.id, spRatingData, predictionsInfo);
-
-  const scoredWins = getSeasonStory(events, team.id, spRatingData);
+  const seasonStory = getSeasonStory(events, team.id, spRatingData);
 
   if (!coachInfo) {
     throw new Error("No coach found for this team!");
   }
+
+  // Normalize schedule for frontend, keep key info and store SP+ rating
+  const normalizedSchedule = events.map((game: any) => {
+    const comp = game.competitions?.[0];
+    if (!comp) return null;
+
+    const competitors = comp.competitors;
+    const teamComp = competitors.find((c: any) => c.team.id === team.id);
+    const oppComp = competitors.find((c: any) => c.team.id !== team.id);
+    if (!teamComp || !oppComp) return null;
+
+    const opponentName = oppComp.team.location;
+    const opponentRating = spRatingData[opponentName] ?? 0;
+
+    const homeAway = teamComp.homeAway;
+    const neutral = comp.neutralSite;
+    const teamScore = Number(teamComp.score?.value ?? 0);
+    const opponentScore = Number(oppComp.score?.value ?? 0);
+    const completed = comp.status?.type?.completed ?? false;
+    const win = completed && teamScore > opponentScore;
+
+    const prediction = predictionsInfo.find(
+      (p: any) => Number(p.gameId) === Number(game.id)
+    );
+
+    return {
+      id: game.id,
+      date: game.date,
+      completed,
+      homeAway,
+      neutral,
+      teamScore,
+      opponentScore,
+      win,
+      opponent: opponentName,
+      channel: comp.broadcasts?.[0]?.media?.shortName ?? null,
+      spRating: opponentRating,
+      winProb: prediction,
+      tags: seasonStory.games.find((g: any) => g.id === game.id)?.tags ?? [],
+    };
+  }).filter(Boolean);
 
   return {
     id: team.id,
@@ -34,7 +73,7 @@ export function transformFB(teamData: any, scheduleData: any, coachesData: any, 
     city: metadata.city,
     state: metadata.state,
     stadium: metadata.stadium,
-    logo: team.logos[0].href,
+    logo: team.logos[0]?.href,
     color: team.color,
 
     coachName: coachInfo.name,
@@ -51,7 +90,7 @@ export function transformFB(teamData: any, scheduleData: any, coachesData: any, 
     winPct: (allTimeRecord.wins + (allTimeRecord.ties * 0.5)) / allTimeRecord.total,
     bowlRecord: bowlInfo,
 
-    recentSeasons: recentSeasons,
+    recentSeasons,
 
     rival: metadata.rivalries.football,
     rivalRecord: `${matchupData.team1Wins}-${matchupData.team2Wins}-${matchupData.ties}`,
@@ -61,9 +100,11 @@ export function transformFB(teamData: any, scheduleData: any, coachesData: any, 
     standing: team.standingSummary,
     rank: normalizeRank(lastGameParsed.mainTeam.curatedRank?.current),
 
-    seasonStory: scoredWins,
+    seasonStory,
 
-    scheduleSummary: scheduleSummary,
+    scheduleSummary,
+    spRatingData,
+    schedule: normalizedSchedule,
 
     lastGame: lastGame ? {
       oppTeam: lastGameParsed.oppTeam.team.abbreviation,
@@ -73,6 +114,7 @@ export function transformFB(teamData: any, scheduleData: any, coachesData: any, 
       homeAway: lastGameParsed.mainTeam.homeAway,
       date: new Date(lastGame.date).toLocaleDateString(undefined, { month: "short", day: "numeric" }),
     } : null,
+
     nextGame: nextGame && nextGameParsed ? {
       oppTeam: nextGameParsed.oppTeam.team.abbreviation,
       homeAway: nextGameParsed.mainTeam.homeAway,

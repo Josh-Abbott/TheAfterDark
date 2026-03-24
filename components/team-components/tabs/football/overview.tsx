@@ -1,4 +1,4 @@
-import { formatDate } from "@/lib/date/dateUtils"
+import { formatDateMD } from "@/lib/date/dateUtils"
 import { Bar, BarChart, Line, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 
 interface HeaderProps {
@@ -45,7 +45,7 @@ function Overview({ teamInfo, sport }: HeaderProps) {
       trend,
       opponent: game.opponent,
       result: game.win ? "W" : "L",
-      date: formatDate(game.date)
+      date: formatDateMD(game.date)
     };
   });
 
@@ -133,7 +133,7 @@ function Overview({ teamInfo, sport }: HeaderProps) {
                   </p>
                   <p className="font-semibold text-xl">{game.teamScore} – {game.opponentScore}</p>
                   <p className="text-sm text-gray-500">
-                    {formatDate(game.date)}
+                    {formatDateMD(game.date)}
                     {game.tags?.length > 0 && " • "}
                     {game.tags?.join(" • ")}
                   </p>
@@ -161,7 +161,7 @@ function Overview({ teamInfo, sport }: HeaderProps) {
                   </p>
                   <p className="font-semibold text-xl">{game.teamScore} – {game.opponentScore}</p>
                   <p className="text-sm text-gray-500">
-                    {formatDate(game.date)}
+                    {formatDateMD(game.date)}
                     {game.tags?.length > 0 && " • "}
                     {game.tags?.join(" • ")}
                   </p>
