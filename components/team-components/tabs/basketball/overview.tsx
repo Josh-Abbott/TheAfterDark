@@ -34,32 +34,6 @@ function Overview({ teamInfo, sport }: HeaderProps) {
           <p className="text-sm text-gray-500">Capacity: {new Intl.NumberFormat('en-US').format(teamData.arena.capacity)}</p>
         </div>
 
-        {/* All-Time Record */}
-        <div className="border rounded-lg p-6 text-center">
-          <h3 className="text-sm uppercase tracking-wide text-gray-500 mb-2">
-            All-Time Record
-          </h3>
-          <p className="text-xl font-semibold"></p>
-          <p className="text-sm text-gray-500"> Win %</p>
-        </div>
-
-        {/* Program Founded */}
-        <div className="border rounded-lg p-6 text-center">
-          <h3 className="text-sm uppercase tracking-wide text-gray-500 mb-2">
-            Program Founded
-          </h3>
-          <p className="text-xl font-semibold">{sport.founded}</p>
-          <p className="text-sm text-gray-500">{Math.abs(sport.founded - currentDate.getFullYear())} seasons</p>
-        </div>
-
-        {/* Rivalry */}
-        <div className="border rounded-lg p-6 text-center">
-          <h3 className="text-sm uppercase tracking-wide text-gray-500 mb-2">
-            Primary Rival
-          </h3>
-          <p className="text-xl font-semibold">{teamData.rival}</p>
-        </div>
-
         {/* Location */}
         <div className="border rounded-lg p-6 text-center">
           <h3 className="text-sm uppercase tracking-wide text-gray-500 mb-2">
@@ -67,6 +41,33 @@ function Overview({ teamInfo, sport }: HeaderProps) {
           </h3>
           <p className="text-xl font-semibold">{teamData.city}, {teamData.state}</p>
           <p className="text-sm text-gray-500">{teamData.school} University</p>
+        </div>
+
+        {/* Mascot */}
+        <div className="border rounded-lg p-6 text-center">
+          <h3 className="text-sm uppercase tracking-wide text-gray-500 mb-2">
+            Team Mascot
+          </h3>
+          <p className="text-xl font-semibold">{teamData.mascot.name}</p>
+          <p className="text-sm text-gray-500">Since {teamData.mascot.year}</p>
+        </div>
+        
+        {/* Fight Song */}
+        <div className="border rounded-lg p-6 text-center">
+          <h3 className="text-sm uppercase tracking-wide text-gray-500 mb-2">
+            Fight Song
+          </h3>
+          <p className="text-xl font-semibold">{teamData.fightSong.name}</p>
+          <p className="text-sm text-gray-500">Created in {teamData.fightSong.year}</p>
+        </div>
+        
+        {/* Program Founded */}
+        <div className="border rounded-lg p-6 text-center">
+          <h3 className="text-sm uppercase tracking-wide text-gray-500 mb-2">
+            Program Founded
+          </h3>
+          <p className="text-xl font-semibold">{sport.founded}</p>
+          <p className="text-sm text-gray-500">{Math.abs(sport.founded - currentDate.getFullYear())} seasons</p>
         </div>
       </div>
     </div>

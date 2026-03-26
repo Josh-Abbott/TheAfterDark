@@ -59,6 +59,8 @@ export function transformBB(sportName: string, teamData: TeamData, scheduleData:
     id: team.id,
     name: team.displayName,
     school: metadata?.name,
+    mascot: metadata?.mascot,
+    fightSong: metadata?.fightSong,
     city: metadata?.city,
     state: metadata?.state,
     arena: metadata?.arena,
