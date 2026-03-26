@@ -1,5 +1,5 @@
 import { fetchCFBD } from "./client";
 
-export async function getDraftInfo(team: string) {
+export async function getDraftInfoFB(team: string) {
   return fetchCFBD(`/draft/picks?school=${encodeURIComponent(team)}`);
 }

@@ -1,8 +1,43 @@
 import { getLastGame, getNextGame, parseGame, normalizeRank } from "@/lib/espn/espnUtils";
 
-export function transformBB(teamData: any, scheduleData: any) {
-  const team = teamData.team;
-  const events = scheduleData.events;
+// Type Definitions
+interface TeamData {
+  team: {
+    id: number;
+    displayName: string;
+    location: string;
+    logos: { href: string }[];
+    color: string;
+    standingSummary: any;
+    record: any;
+  };
+}
+
+interface ScheduleData {
+  events: any[];
+}
+
+interface Metadata {
+  name: string;
+  city: string;
+  state: string;
+  arena?: {
+    name?: string;
+    capacity?: number;
+  };
+  rivalries?: {
+    football?: string;
+    basketball?: string;
+  };
+  sports: any;
+}
+
+// Main Transformer
+export function transformBB(sportName: string, teamData: TeamData, scheduleData: ScheduleData, metadata: Metadata) {
+  const team = teamData?.team ?? {};
+  const events = scheduleData?.events;
+
+  const sportData = metadata?.sports.find((s: any) => s.name === sportName)
 
   const lastGame = getLastGame(events);
   const nextGame = getNextGame(events);
@@ -10,18 +45,32 @@ export function transformBB(teamData: any, scheduleData: any) {
   const lastGameParsed = parseGame(lastGame, team.id);
   const nextGameParsed = nextGame ? parseGame(nextGame, team.id) : null;
 
+  const currentDate = new Date();
+
   return {
     id: team.id,
     name: team.displayName,
-    logo: team.logo,
+    school: metadata?.name,
+    city: metadata?.city,
+    state: metadata?.state,
+    arena: metadata?.arena,
+    logo: team.logos[0]?.href,
     color: team.color,
+
+    coachName: sportData?.coach,
+    coachYear: Math.abs(sportData?.coachStart - currentDate.getFullYear()),
+
+    rival: metadata?.rivalries?.basketball,
+
     record: {
       overall: team.record.items[0].summary,
       conference: lastGameParsed.mainTeam.record[1].displayValue,
     },
+
     streak: team.record.items[0].stats.find((s: any) => s.name === "streak")?.value,
     standing: team.standingSummary,
     rank: normalizeRank(lastGameParsed.mainTeam.curatedRank?.current),
+
     lastGame: lastGame ? {
       oppTeam: lastGameParsed.oppTeam.team.abbreviation,
       oppWin: lastGameParsed.oppTeam.winner,

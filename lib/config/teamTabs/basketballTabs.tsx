@@ -1,36 +1,18 @@
 // Centralized config for the tabs showcased on the team basketball pages
 import dynamic from "next/dynamic";
 
-import OverviewTab from "@/components/team-components/tabs/football/overview"; // temp set to fb for testing
-import ScheduleTab from "@/components/team-components/tabs/football/schedule";
-const StatsTab = dynamic(
-  () => import("@/components/team-components/tabs/football/stats"),
+const OverviewTab = dynamic(
+  () => import("@/components/team-components/tabs/basketball/overview"),
   {
     ssr: false,
-    loading: () => <div>Loading stats...</div>,
+    loading: () => <div className="justify-center text-center">Loading data...</div>,
   }
 );
-import PlayersTab from "@/components/team-components/tabs/football/players";
 
 export const BB_TABS = [
   {
     id: "overview",
     label: "Overview",
     component: OverviewTab
-  },
-  {
-    id: "schedule",
-    label: "Schedule",
-    component: ScheduleTab
-  },
-  {
-    id: "stats",
-    label: "Team Stats",
-    component: StatsTab
-  },
-  {
-    id: "players",
-    label: "Player Leaders",
-    component: PlayersTab
-  },
+  }
 ];

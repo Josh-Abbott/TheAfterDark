@@ -1,6 +1,6 @@
 import { fetchCFBD } from "./client";
 
-export async function getMetricsInfo(metricType: string, team: string) {
+export async function getMetricsInfoFB(metricType: string, team: string) {
   let year = new Date().getFullYear();
 
   if (metricType === "wp/pregame") {

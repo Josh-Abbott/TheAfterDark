@@ -1,16 +1,34 @@
 // Centralized config for the tabs showcased on the team football pages
 import dynamic from "next/dynamic";
 
-import OverviewTab from "@/components/team-components/tabs/football/overview";
-import ScheduleTab from "@/components/team-components/tabs/football/schedule";
+const OverviewTab = dynamic(
+  () => import("@/components/team-components/tabs/football/overview"),
+  {
+    ssr: false,
+    loading: () => <div className="justify-center text-center">Loading data...</div>,
+  }
+); 
+const ScheduleTab = dynamic(
+  () => import("@/components/team-components/tabs/football/schedule"),
+  {
+    ssr: false,
+    loading: () => <div className="justify-center text-center">Loading schedule...</div>,
+  }
+); 
 const StatsTab = dynamic(
   () => import("@/components/team-components/tabs/football/stats"),
   {
     ssr: false,
-    loading: () => <div>Loading stats...</div>,
+    loading: () => <div className="justify-center text-center">Loading stats...</div>,
   }
 );
-import PlayersTab from "@/components/team-components/tabs/football/players";
+const PlayersTab = dynamic(
+  () => import("@/components/team-components/tabs/football/players"),
+  {
+    ssr: false,
+    loading: () => <div className="justify-center text-center">Loading player data...</div>,
+  }
+);
 
 export const FB_TABS = [
   {

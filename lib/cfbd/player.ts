@@ -1,6 +1,6 @@
 import { fetchCFBD } from "./client";
 
-export async function getPlayerInfo(team: string) {
+export async function getPlayerInfoFB(team: string) {
   let year = new Date().getFullYear();
   let playerInfo = await fetchCFBD(`/stats/player/season?year=${year}&team=${encodeURIComponent(team)}`);
 

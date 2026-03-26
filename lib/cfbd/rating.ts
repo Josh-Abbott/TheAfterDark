@@ -1,6 +1,6 @@
 import { fetchCFBD } from "./client";
 
-export async function getRatingInfo(ratingType: string) {
+export async function getRatingInfoFB(ratingType: string) {
   let year = new Date().getFullYear();
   if (ratingType === "SP+") {
     let ratings = await fetchCFBD(`/ratings/sp?year=${year}`);

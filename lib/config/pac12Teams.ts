@@ -12,7 +12,7 @@ export const PAC_TEAMS = [
       capacity: 32952
     },
 
-    arema: {
+    arena: {
       name: "Beasley Coliseum",
       capacity: 12058
     },
@@ -24,8 +24,8 @@ export const PAC_TEAMS = [
 
     sports: [
       { name: "Football", id: 265, founded: 1894 },
-      { name: "Men's Basketball", id: 265, founded: 1901 },
-      //{ name: "Baseball", id: 134, founded: 1892 },
+      { name: "Men's Basketball", id: 265, founded: 1901, coach: "David Riley", coachStart: 2024 },
+      //{ name: "Baseball", id: 134, founded: 1892, coach: "Nathan Choate" },
     ],
   },
   {
@@ -39,7 +39,7 @@ export const PAC_TEAMS = [
       capacity: 35548
     },
 
-    arema: {
+    arena: {
       name: "Gill Coliseum",
       capacity: 9604
     },
@@ -51,7 +51,7 @@ export const PAC_TEAMS = [
 
     sports: [
       { name: "Football", id: 204, founded: 1894 },
-      { name: "Men's Basketball", id: 204, founded: 1901 },
+      { name: "Men's Basketball", id: 204, founded: 1901, coach: "Wayne Tinkle", coachStart: 2014 },
       //{ name: "Baseball", id: 113, founded: 1907 },
     ],
   },
@@ -66,7 +66,7 @@ export const PAC_TEAMS = [
       capacity: 36363
     },
 
-    arema: {
+    arena: {
       name: "ExtraMile Arena",
       capacity: 12644
     },
@@ -78,7 +78,7 @@ export const PAC_TEAMS = [
 
     sports: [
       { name: "Football", id: 68, founded: 1933 },
-      { name: "Men's Basketball", id: 68, founded: 1933 },
+      { name: "Men's Basketball", id: 68, founded: 1933, coach: "Leon Rice", coachStart: 2010 },
     ],
   },
   {
@@ -92,7 +92,7 @@ export const PAC_TEAMS = [
       capacity: 36500
     },
 
-    arema: {
+    arena: {
       name: "Wolstein Center",
       capacity: 13610
     },
@@ -104,7 +104,7 @@ export const PAC_TEAMS = [
 
     sports: [
       { name: "Football", id: 36, founded: 1892 },
-      { name: "Men's Basketball", id: 36, founded: 1901 },
+      { name: "Men's Basketball", id: 36, founded: 1901, coach: "Ali Farokhmanesh", coachStart: 2025 },
     ],
   },
   {
@@ -118,7 +118,7 @@ export const PAC_TEAMS = [
       capacity: 40727
     },
 
-    arema: {
+    arena: {
       name: "Save Mart Center",
       capacity: 18000
     },
@@ -130,7 +130,7 @@ export const PAC_TEAMS = [
 
     sports: [
       { name: "Football", id: 278, founded: 1921 },
-      { name: "Men's Basketball", id: 278, founded: 1921 },
+      { name: "Men's Basketball", id: 278, founded: 1921, coach: "Vance Walberg", coachStart: 2024 },
       //{ name: "Baseball", id: 137, founded: 1922 },
     ],
   },
@@ -140,7 +140,7 @@ export const PAC_TEAMS = [
     city: "Pullman",
     state: "WA",
 
-    arema: {
+    arena: {
       name: "McCarthey Athletic Center",
       capacity: 6000
     },
@@ -150,7 +150,7 @@ export const PAC_TEAMS = [
     },
 
     sports: [
-      { name: "Men's Basketball", id: 2250, founded: 1907 },
+      { name: "Men's Basketball", id: 2250, founded: 1907, coach: "Mark Few", coachStart: 1999 },
       { name: "Women's Basketball", id: 2250, founded: 1961 },
       //{ name: "Baseball", id: 287, founded: 1890 },
     ],
@@ -166,7 +166,7 @@ export const PAC_TEAMS = [
       capacity: 35000
     },
 
-    arema: {
+    arena: {
       name: "Viejas Arena",
       capacity: 12414
     },
@@ -180,7 +180,7 @@ export const PAC_TEAMS = [
 
     sports: [
       { name: "Football", id: 21, founded: 1921 },
-      { name: "Men's Basketball", id: 21, founded: 1921 },
+      { name: "Men's Basketball", id: 21, founded: 1921, coach: "Brian Dutcher", coachStart: 2017 },
       //{ name: "Baseball", id: 62, founded: 1936 },
     ],
   },
@@ -195,7 +195,7 @@ export const PAC_TEAMS = [
       capacity: 28388
     },
 
-    arema: {
+    arena: {
       name: "Strahan Arena",
       capacity: 10000
     },
@@ -207,7 +207,7 @@ export const PAC_TEAMS = [
 
     sports: [
       { name: "Football", id: 326, founded: 1904 },
-      { name: "Men's Basketball", id: 326, founded: 1904 },
+      { name: "Men's Basketball", id: 326, founded: 1904, coach: "Terrence Johnson", coachStart: 2020 },
       //{ name: "Baseball", id: 147, founded: 1985 },
     ],
   },
@@ -222,7 +222,7 @@ export const PAC_TEAMS = [
       capacity: 25513
     },
 
-    arema: {
+    arena: {
       name: "Dee Glen Smith Spectrum",
       capacity: 10270
     },
@@ -234,7 +234,7 @@ export const PAC_TEAMS = [
 
     sports: [
       { name: "Football", id: 328, founded: 1892 },
-      { name: "Men's Basketball", id: 328, founded: 1903 },
+      { name: "Men's Basketball", id: 328, founded: 1903, coach: "Jerrod Calhoun", coachStart: 2024 },
     ],
   },
 ];

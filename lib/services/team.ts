@@ -4,14 +4,16 @@ import { PAC_TEAMS } from "@/lib/config/pac12Teams";
 import { getSchedule } from "@/lib/espn/schedule";
 import { getTeam } from "@/lib/espn/team";
 
-import { getCoachesInfo } from "@/lib/cfbd/coaches";
-import { getRecordInfo } from "@/lib/cfbd/records";
-import { getRatingInfo } from "@/lib/cfbd/rating";
-import { getMatchupInfo } from "@/lib/cfbd/matchup";
-import { getDraftInfo } from "@/lib/cfbd/draftPicks";
-import { getMetricsInfo } from "@/lib/cfbd/metrics";
-import { getTeamInfo } from "@/lib/cfbd/team";
-import { getPlayerInfo } from "@/lib/cfbd/player";
+import { getCoachesInfoFB } from "@/lib/cfbd/coaches";
+import { getRecordInfoFB } from "@/lib/cfbd/records";
+import { getRatingInfoFB } from "@/lib/cfbd/rating";
+import { getMatchupInfoFB } from "@/lib/cfbd/matchup";
+import { getDraftInfoFB } from "@/lib/cfbd/draftPicks";
+import { getMetricsInfoFB } from "@/lib/cfbd/metrics";
+import { getTeamInfoFB } from "@/lib/cfbd/team";
+import { getPlayerInfoFB } from "@/lib/cfbd/player";
+
+import { getTeamInfoBB } from "@/lib/cbbd/team";
 
 import { transformBB } from "@/lib/transformers/teamBB";
 import { transformFB } from "@/lib/transformers/teamFB";
@@ -44,20 +46,24 @@ export async function getTeamData(teamName: string, sportName: string) {
   let transformedTeam;
 
   if (sport.path === "basketball/mens-college-basketball" || sport.path === "basketball/womens-college-basketball") {
-    transformedTeam = transformBB(teamData, scheduleData);
+    const [teamCBBDInfo] = await Promise.all([
+      getTeamInfoBB(teamName),
+    ]);
+    
+    transformedTeam = transformBB(sportName, teamData, scheduleData, team);
   } else if (sport.path === "football/college-football") {
 
     const rival = team.rivalries?.football;
 
     const [coachesData, recordData, spRatingInfo, draftInfo, predictionInfo, teamCFBDInfo, playerInfo, matchupData,] = await Promise.all([
-      getCoachesInfo(teamName),
-      getRecordInfo(teamName),
-      getRatingInfo("SP+"),
-      getDraftInfo(teamName),
-      getMetricsInfo("wp/pregame", teamName),
-      getTeamInfo(teamName),
-      getPlayerInfo(teamName),
-      rival ? getMatchupInfo(teamName, rival) : Promise.resolve(null)
+      getCoachesInfoFB(teamName),
+      getRecordInfoFB(teamName),
+      getRatingInfoFB("SP+"),
+      getDraftInfoFB(teamName),
+      getMetricsInfoFB("wp/pregame", teamName),
+      getTeamInfoFB(teamName),
+      getPlayerInfoFB(teamName),
+      rival ? getMatchupInfoFB(teamName, rival) : Promise.resolve(null)
     ]);
 
     transformedTeam = transformFB(teamData, scheduleData, coachesData, recordData, matchupData, spRatingInfo, draftInfo, predictionInfo, teamCFBDInfo, playerInfo, team);
