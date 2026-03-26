@@ -19,6 +19,14 @@ interface ScheduleData {
 
 interface Metadata {
   name: string;
+  mascot?: {
+    name?: string;
+    year?: number;
+  }
+  fightSong?: {
+    name?: string;
+    year?: number;
+  }
   city: string;
   state: string;
   arena?: {

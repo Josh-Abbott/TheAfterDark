@@ -21,6 +21,14 @@ interface ScheduleData {
 
 interface Metadata {
   name: string;
+  mascot?: {
+    name?: string;
+    year?: number;
+  }
+  fightSong?: {
+    name?: string;
+    year?: number;
+  }
   city: string;
   state: string;
   stadium?: {
@@ -164,6 +172,8 @@ export function transformFB(teamData: TeamData, scheduleData: ScheduleData, coac
     id: team.id,
     name: team.displayName,
     school: metadata?.name,
+    mascot: metadata?.mascot,
+    fightSong: metadata?.fightSong,
     city: metadata?.city,
     state: metadata?.state,
     stadium: metadata?.stadium,

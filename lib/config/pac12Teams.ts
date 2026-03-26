@@ -3,9 +3,18 @@
 export const PAC_TEAMS = [
   {
     name: "Washington State",
-    mascot: "Cougars",
     city: "Pullman",
     state: "WA",
+
+    mascot: {
+      name: "Butch T. Cougar",
+      year: 1927
+    },
+
+    fightSong: {
+      name: "The Fight Song",
+      year: 1919
+    },
 
     stadium: {
       name: "Martin Stadium",
@@ -30,9 +39,18 @@ export const PAC_TEAMS = [
   },
   {
     name: "Oregon State",
-    mascot: "Beavers",
     city: "Corvallis",
     state: "OR",
+
+    mascot: {
+      name: "Benny Beaver",
+      year: 1942
+    },
+
+    fightSong: {
+      name: "Hail to Old OSU",
+      year: 1914
+    },
 
     stadium: {
       name: "Reser Stadium",
@@ -57,9 +75,18 @@ export const PAC_TEAMS = [
   },
   {
     name: "Boise State",
-    mascot: "Broncos",
     city: "Boise",
     state: "ID",
+
+    mascot: {
+      name: "Buster Bronco",
+      year: 1932
+    },
+
+    fightSong: {
+      name: "Orange and Blue",
+      year: 1940
+    },
 
     stadium: {
       name: "Albertsons Stadium",
@@ -83,9 +110,18 @@ export const PAC_TEAMS = [
   },
   {
     name: "Colorado State",
-    mascot: "Ramns",
     city: "Fort Collins",
     state: "CO",
+
+    mascot: {
+      name: "CAM the Ram",
+      year: 1947
+    },
+
+    fightSong: {
+      name: "Stalwart Rams",
+      year: 1932
+    },
 
     stadium: {
       name: "Canvas Stadium",
@@ -109,9 +145,18 @@ export const PAC_TEAMS = [
   },
   {
     name: "Fresno State",
-    mascot: "Bulldogs",
     city: "Fresno",
     state: "CA",
+
+    mascot: {
+      name: "Victor E. Bulldog",
+      year: 1921
+    },
+
+    fightSong: {
+      name: "FIGHT VARSITY!",
+      year: 1934
+    },
 
     stadium: {
       name: "Valley Children's Stadium",
@@ -136,9 +181,18 @@ export const PAC_TEAMS = [
   },
   {
     name: "Gonzaga",
-    mascot: "Cougars",
     city: "Pullman",
     state: "WA",
+
+    mascot: {
+      name: "Spike the Bulldog",
+      year: 1921
+    },
+
+    fightSong: {
+      name: "Gonzaga Fight Song",
+      year: 2010
+    },
 
     arena: {
       name: "McCarthey Athletic Center",
@@ -157,9 +211,18 @@ export const PAC_TEAMS = [
   },
   {
     name: "San Diego State",
-    mascot: "Aztecs",
     city: "San Diego",
     state: "CA",
+
+    mascot: {
+      name: "N/A",
+      year: 0
+    },
+
+    fightSong: {
+      name: "Aztec Fight Song",
+      year: 1936
+    },
 
     stadium: {
       name: "Snapdragon Stadium",
@@ -186,9 +249,18 @@ export const PAC_TEAMS = [
   },
   {
     name: "Texas State",
-    mascot: "Bobcats",
     city: "San Marcos",
     state: "TX",
+
+    mascot: {
+      name: "Boko the Bobcat",
+      year: 1921
+    },
+
+    fightSong: {
+      name: "Go Bobcats",
+      year: 1961
+    },
 
     stadium: {
       name: "UFCU Stadium",
@@ -213,9 +285,18 @@ export const PAC_TEAMS = [
   },
   {
     name: "Utah State",
-    mascot: "Aggies",
     city: "Logan",
     state: "UT",
+
+    mascot: {
+      name: "Big Blue",
+      year: 1976
+    },
+
+    fightSong: {
+      name: "Hail the Utah Aggies",
+      year: 1933
+    },
 
     stadium: {
       name: "Maverik Stadium",
