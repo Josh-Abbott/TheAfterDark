@@ -13,7 +13,7 @@ import { getMetricsInfoFB } from "@/lib/cfbd/metrics";
 import { getTeamInfoFB } from "@/lib/cfbd/team";
 import { getPlayerInfoFB } from "@/lib/cfbd/player";
 
-import { getTeamInfoBB } from "@/lib/cbbd/team";
+import { getScheduleTest } from "@/lib/cbbd/team";
 
 import { transformBB } from "@/lib/transformers/teamBB";
 import { transformFB } from "@/lib/transformers/teamFB";
@@ -46,9 +46,11 @@ export async function getTeamData(teamName: string, sportName: string) {
   let transformedTeam;
 
   if (sport.path === "basketball/mens-college-basketball" || sport.path === "basketball/womens-college-basketball") {
-    const [teamCBBDInfo] = await Promise.all([
-      getTeamInfoBB(teamName),
+    const [teamTest] = await Promise.all([
+      getScheduleTest(teamData.team.nickname, 2025),
     ]);
+
+    console.log(teamTest);
     
     transformedTeam = transformBB(sportName, teamData, scheduleData, team);
   } else if (sport.path === "football/college-football") {

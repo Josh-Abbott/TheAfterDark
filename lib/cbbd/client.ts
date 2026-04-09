@@ -1,17 +1,26 @@
-const BASE_URL = "https://api.collegebasketballdata.com";
+import { parquetReadObjects } from "hyparquet";
 
-export async function fetchCBBD(path: string, options?: RequestInit) {
-  const res = await fetch(`${BASE_URL}${path}`, {
-    headers: {
-      Authorization: `Bearer ${process.env.CFBD_API_KEY}`, // Bearer needed here
-    },
-    next: { revalidate: 86400 }, // cache for a day (stats rarely change)
+const BASE_URL = "https://www.cbbdata.com/api/";
+
+export async function fetchCBD(path: string, options?: RequestInit) {
+  const separator = path.includes("?") ? "&" : "?";
+  const url = `${BASE_URL}${path}${separator}key=${process.env.CBD_API_KEY}`;
+
+  const res = await fetch(url, {
+    next: { revalidate: 900 },
     ...options,
   });
 
   if (!res.ok) {
-    throw new Error("CBBD fetch failed!");
+    const text = await res.text();
+    throw new Error(`CBD fetch failed! ${res.status}: ${text}`);
   }
 
-  return res.json();
+  const arrayBuffer = await res.arrayBuffer();
+
+  const rows = await parquetReadObjects({
+    file: arrayBuffer,
+  });
+
+  return rows;
 }

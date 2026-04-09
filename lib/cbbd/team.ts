@@ -1,14 +1,10 @@
-import { fetchCBBD } from "./client";
+import { fetchCBD } from "./client";
+import { formatTeamName } from "@/lib/cbbd/cbbdUtils";
 
-export async function getTeamInfoBB(team: string) {
-  let year = new Date().getFullYear();
-  let teamInfo = await fetchCBBD(`/games/teams?team=${encodeURIComponent(team)}&season=${year}`);
+export async function getScheduleTest(team: string, year: number) {
+  const formattedTeam = formatTeamName(team);
 
-  // If no events found, default to last year
-  if (!teamInfo.length) {
-    year -= 1;
-    teamInfo = await fetchCBBD(`/games/teams?team=${encodeURIComponent(team)}&season=${year}`);
-  }
-
-  return teamInfo;
+  return fetchCBD(
+    `torvik/team_schedules?team=${formattedTeam}&year=${year}`
+  );
 }

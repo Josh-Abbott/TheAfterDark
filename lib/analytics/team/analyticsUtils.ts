@@ -133,10 +133,7 @@ export function getSeasonStory(schedule: any[], teamId: number, spLookup: any) {
       tags: finalTags
     });
 
-
-
     // Best/Worst Scoring
-
     let score;
 
     if (win) {

@@ -70,6 +70,14 @@ function Overview({ teamInfo, sport }: HeaderProps) {
           <p className="text-sm text-gray-500">{Math.abs(sport.founded - currentDate.getFullYear())} seasons</p>
         </div>
       </div>
+
+      {/* Tournament Resume */}
+      <h2 className="text-2xl md:text-3xl font-semibold text-center mb-8">
+        Tournament Resume
+      </h2>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10 text-center"></div>
+
+      
     </div>
   );
 }
