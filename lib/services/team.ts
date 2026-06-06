@@ -54,8 +54,9 @@ export async function getTeamData(teamName: string, sportName: string) {
     
     transformedTeam = transformBB(sportName, teamData, scheduleData, team);
   } else if (sport.path === "football/college-football") {
-
-    const rival = team.rivalries?.football;
+    
+    const rivalryData = team?.rivalries.find((s: any) => s.sport === "Football")
+    const rival = rivalryData ? rivalryData.team : null;
 
     const [coachesData, recordData, spRatingInfo, draftInfo, predictionInfo, teamCFBDInfo, playerInfo, matchupData,] = await Promise.all([
       getCoachesInfoFB(teamName),

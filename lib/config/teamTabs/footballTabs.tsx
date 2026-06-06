@@ -1,11 +1,11 @@
 // Centralized config for the tabs showcased on the team football pages
 import dynamic from "next/dynamic";
 
-const OverviewTab = dynamic(
-  () => import("@/components/team-components/tabs/football/overview"),
+const IdentityTab = dynamic(
+  () => import("@/components/team-components/tabs/football/identity"),
   {
     ssr: false,
-    loading: () => <div className="justify-center text-center">Loading data...</div>,
+    loading: () => <div className="justify-center text-center">Loading identity data...</div>,
   }
 ); 
 const ScheduleTab = dynamic(
@@ -32,9 +32,9 @@ const PlayersTab = dynamic(
 
 export const FB_TABS = [
   {
-    id: "overview",
-    label: "Overview",
-    component: OverviewTab
+    id: "identity",
+    label: "Identity",
+    component: IdentityTab
   },
   {
     id: "schedule",

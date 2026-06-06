@@ -33,10 +33,7 @@ interface Metadata {
     name?: string;
     capacity?: number;
   };
-  rivalries?: {
-    football?: string;
-    basketball?: string;
-  };
+  rivalries?: any;
   sports: any;
 }
 

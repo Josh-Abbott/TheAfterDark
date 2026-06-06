@@ -41,15 +41,15 @@ function Schedule({ teamInfo }: ScheduleProps) {
         {/* Avg Opponent Rating */}
         <div className="border rounded-lg p-6 text-center">
           <h3 className="text-sm uppercase tracking-wide text-gray-500 mb-2">
-            Avg Opponent (SP+)
+            Avg Opponent Rating (SP+)
           </h3>
           <p className="text-2xl font-semibold">
             {avgOpponentRating}
           </p>
           <p className="text-sm text-gray-500">
             {isOffseason
-              ? "No remaining games"
-              : "Remaining schedule"}
+              ? "Season Complete"
+              : "This season"}
           </p>
         </div>
 

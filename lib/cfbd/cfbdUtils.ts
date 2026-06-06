@@ -51,6 +51,7 @@ export function getBowlData(recordsData: any[]) {
   let wins = 0;
   let losses = 0;
   let lastYear: number | null = null;
+  let firstYear: number | null = null;
 
   for (const season of recordsData) {
     const postseason = season.postseason;
@@ -64,13 +65,19 @@ export function getBowlData(recordsData: any[]) {
     if (!lastYear || season.year > lastYear) {
       lastYear = season.year;
     }
+
+    // Keep track of first bowl year
+    if (!firstYear || season.year < firstYear) {
+      firstYear = season.year;
+    }
   };
 
   return {
     appearances,
     wins,
     losses,
-    lastYear
+    lastYear,
+    firstYear
   };
 }
 
@@ -115,6 +122,26 @@ function groupPlayerStats(data: any[]) {
   });
 
   return Object.values(players);
+}
+
+// Filter through the /records CFBD data and look for the most successful seasons based on total wins
+export function getBestSeason(records: any[]) {
+  if (!records || records.length === 0) return null;
+
+  const winCounts = records.map(season => season.total?.wins ?? 0);
+  const maxWins = Math.max(...winCounts);
+  const peakSeasons = records.filter(season => (season.total?.wins ?? 0) === maxWins);
+  const occurrenceCount = peakSeasons.length;
+  const sortedPeaks = peakSeasons.sort((a, b) => b.year - a.year);
+  const latestPeakSeason = sortedPeaks[0];
+
+  return {
+    wins: latestPeakSeason.total?.wins ?? 0,
+    losses: latestPeakSeason.total?.losses ?? 0,
+    ties: latestPeakSeason.total?.ties ?? 0,
+    latestYear: latestPeakSeason.year,
+    occurrenceCount: occurrenceCount
+  };
 }
 
 // A helper function to reduce the player lists in order to find the leader

@@ -1,4 +1,4 @@
-import { getCurrentCoachInfo, calculateAllTimeRecord, getBowlData, getRecentSeasons, getPlayerLeaders } from "@/lib/cfbd/cfbdUtils";
+import { getCurrentCoachInfo, calculateAllTimeRecord, getBowlData, getRecentSeasons, getPlayerLeaders, getBestSeason } from "@/lib/cfbd/cfbdUtils";
 import { getSeasonStory, getScheduleSummary, getTeamStats } from "@/lib/analytics/team/analyticsUtils";
 import { getLastGame, getNextGame, parseGame, normalizeRank } from "@/lib/espn/espnUtils";
 import { calculateStreak } from "@/lib/sports/teamStats";
@@ -11,6 +11,7 @@ interface TeamData {
     location: string;
     logos: { href: string }[];
     color: string;
+    alternateColor: string;
     standingSummary: any;
   };
 }
@@ -35,10 +36,11 @@ interface Metadata {
     name?: string;
     capacity?: number;
   };
-  rivalries?: {
-    football?: string;
-    basketball?: string;
-  };
+  confHistory?: string[];
+  traditions?: any;
+  alumni?: any;
+  rivalries?: any;
+  sports: any;
 }
 
 interface SPTeamRating {
@@ -124,10 +126,42 @@ function formatNextGameForFrontend(nextGameParsed: any, nextGameRaw: any) {
 }
 
 function computeRivalStats(matchupData: any) {
-  const totalGames = matchupData?.team1Wins + matchupData?.team2Wins + matchupData?.ties;
+  const totalGames = (matchupData?.team1Wins ?? 0) + (matchupData?.team2Wins ?? 0) + (matchupData?.ties ?? 0);
+  const games = Array.isArray(matchupData.games) ? [...matchupData.games] : [];
+
+  const sortedMatchups = games
+    .filter((game: any) => game?.date)
+    .sort((a: any, b: any) => new Date(a.date).getTime() - new Date(b.date).getTime());
+
+  const mostRecentMatchup = sortedMatchups[sortedMatchups.length - 1] ?? null;
+
+  let streakType: "win" | "loss" | "tie" | null = null;
+  let streakCount = 0;
+
+  for (let i = sortedMatchups.length - 1; i >= 0; i--) {
+    const game = sortedMatchups[i];
+    if (!game?.winner) break;
+
+    const result = game.winner === matchupData.team1 ? "win" : game.winner === matchupData.team2 ? "loss" : "tie";
+    if (streakType === null) {
+      streakType = result;
+      streakCount = 1;
+    } else if (result === streakType) {
+      streakCount += 1;
+    } else {
+      break;
+    }
+  }
+
+  const formattedStreak = streakType
+    ? `${streakType === "win" ? "W" : streakType === "loss" ? "L" : "T"}${streakCount}`
+    : null;
+
   return {
-    rivalRecord: `${matchupData?.team1Wins}-${matchupData?.team2Wins}-${matchupData?.ties}`,
-    rivalWinPct: totalGames > 0 ? (matchupData?.team1Wins + (matchupData?.ties * 0.5)) / totalGames : 0,
+    rivalRecord: `${matchupData?.team1Wins ?? 0}-${matchupData?.team2Wins ?? 0}-${matchupData?.ties ?? 0}`,
+    rivalWinPct: totalGames > 0 ? ((matchupData?.team1Wins ?? 0) + ((matchupData?.ties ?? 0) * 0.5)) / totalGames : 0,
+    rivalRecentMatchup: mostRecentMatchup?.season ?? null,
+    rivalStreak: formattedStreak,
   };
 }
 
@@ -150,6 +184,7 @@ export function transformFB(teamData: TeamData, scheduleData: ScheduleData, coac
   const allTimeRecord = calculateAllTimeRecord(recordData);
   const bowlInfo = getBowlData(recordData);
   const recentSeasons = getRecentSeasons(recordData);
+  const bestSeason = getBestSeason(recordData);
 
   // SP+ ratings lookup
   const spLookup = buildSpLookup(spRatingData);
@@ -165,8 +200,11 @@ export function transformFB(teamData: TeamData, scheduleData: ScheduleData, coac
   // Normalized schedule
   const normalizedSchedule = normalizeSchedule(events, team.id, spLookup, predictionsInfo, seasonStory);
 
+  // Get rivalry info
+  const rivalryData = metadata?.rivalries.find((s: any) => s.sport === "Football")
+
   // Rival stats
-  const { rivalRecord, rivalWinPct } = computeRivalStats(matchupData);
+  const {rivalRecord, rivalWinPct, rivalRecentMatchup, rivalStreak,} = computeRivalStats(matchupData);
 
   return {
     id: team.id,
@@ -179,17 +217,25 @@ export function transformFB(teamData: TeamData, scheduleData: ScheduleData, coac
     stadium: metadata?.stadium,
     logo: team.logos[0]?.href,
     color: team.color,
+    alternateColor: team.alternateColor,
+
+    confHistory: metadata?.confHistory,
 
     coachName: coachInfo?.name,
     coachYear: coachInfo?.tenure,
 
     draftPicks: draftInfo,
 
+    traditions: metadata?.traditions,
+
+    alumni: metadata?.alumni,
+
     record: {
       overall: lastGameParsed?.mainTeam?.record[0]?.displayValue,
       conference: lastGameParsed?.mainTeam?.record[1]?.displayValue,
     },
 
+    bestSeason: bestSeason,
     atRecord: `${allTimeRecord?.wins}-${allTimeRecord?.losses}-${allTimeRecord?.ties}`,
     winPct: (allTimeRecord?.wins + allTimeRecord?.ties * 0.5) / allTimeRecord?.total,
     bowlRecord: bowlInfo,
@@ -197,9 +243,11 @@ export function transformFB(teamData: TeamData, scheduleData: ScheduleData, coac
     recentSeasons,
     playerLeaders,
 
-    rival: metadata?.rivalries?.football,
+    rivalry: rivalryData,
     rivalRecord,
     rivalWinPct,
+    rivalRecentMatchup,
+    rivalStreak,
 
     streak: calculateStreak(events, team.id),
     standing: team.standingSummary,
